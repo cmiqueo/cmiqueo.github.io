@@ -1,4 +1,7 @@
 
+
+
+
 <!doctype html>
 <!--            _                       _                        
   ___ __ _ _ __| | ___  ___   _ __ ___ (_) __ _ _   _  ___  ___  
@@ -13,235 +16,577 @@
 <meta name="viewport" content="width=device-width, user-scalable=no">
 <title>Carlos Miqueo - Senior Web Engineer</title>
 <meta name="robots" content="noindex, nofollow">
-<script src="https://carlosmiqueo.com/js/jquery.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
-<link rel="stylesheet"  media="screen" type="text/css" href="https://carlosmiqueo.com/screen.css"> 
-<link rel="stylesheet"  media="print" type="text/css" href="https://carlosmiqueo.com/print.css">
 </head>
+<style>
+	:root {
+		--text-color: #ccc;
+		--text-light: #eee;
+		--text-white: #fff;
+		--text-disabled: #aaaaaa80;
+		--bg-color: #000;
+	}
+	body {
+		margin: 0;
+		padding: 0;
+		background-color: var(--bg-color);
+	}
+	.container {
+		width: 100%;
+		height: 80vh;
+		min-height: 720px;
+		background-color: var(--bg-color);
+		color: var(--text-color);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		font-family: 'Open Sans', sans-serif;
+		gap: 25px;
+	}
+	.name {
+		font-size: 36px;
+		line-height: 1;
+		margin-top: 39%;
+		margin-top: 23%;
+		margin-left: 60px;
+		color: #fff;
+	}
+	.name span.title {
+		font-size: 24px;
+		font-style: normal;
+		font-weight: 300;
+		padding-left: 0;
+		color: var(--text-color);
+	}
+	.resume {
+		display: flex;
+		align-items: center;
+		align-items: flex-start;
+		gap: 30px;
+		width: 80%;
+	    max-width: 1200px;
+	    /* min-width: 980px; */
+	}
+	.circle {
+		width: 200px;
+		min-width: 200px;
+		height: 400px;
+		border: gray solid 5px;
+		border-radius: 200px 0 0 200px;
+		border-right: 0;
+		border-color: green yellow orange blue;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-right: -160px;
+		background: linear-gradient(90deg, #181818, transparent);
+	}
+
+	/* 
+	 * Categories Menu 
+	 */
+	.categories {
+		display: flex;
+		flex-direction: column;
+		gap: 42px;
+		font-size: 24px;
+		font-weight: 300;
+		text-align: right;
+	}
+	.categories a {
+		font-size: 24px;
+		font-weight: 300;
+		text-align: right;
+		color: var(--text-color);
+		text-decoration: none;
+	}
+	.categories div:hover a {
+		color: white;
+		cursor: pointer;
+		transition: all .5s ease;
+	}
+	.categories .objective, 
+	.categories .about {
+		margin-right: -85px;
+	}
+
+	.categories .experience, 
+	.categories .contact {
+		margin-right: -25px;
+	}
+	.categories div.selected a {
+		color: var(--text-disabled);
+		transition: all .5s ease;
+	}
+
+	/* 
+	 * Circle Content 
+	 */
+	.circle-content {
+		width: 720px;
+		font-size: 18px;
+	    font-weight: 300;
+		position: relative;
+		margin-left: -30px;
+		max-height: 420px;
+		overflow-y: auto;
+		margin-top: -20px;
+	}
+	.circle-content h2 {
+		font-size: 28px;
+		margin-bottom: 0;
+		color: var(--text-light);
+		margin: 0 0 20px 64px;
+		font-weight: 400;
+	}
+	.circle-content b {
+		font-weight: 400;
+		color: var(--text-white);
+	}
+	.circle-content em {
+		font-size: 14px;
+		font-style: normal;
+		color: var(--text-color);
+	}
+	.circle-content a {
+		color: var(--text-color);
+		text-decoration: none;
+	}
+	.circle-content a:hover {
+		color: #ddd;
+		text-decoration: underline;
+	}
+	.circle-content img {
+		width: 42px;
+		margin-right: 12px;
+		vertical-align: middle;
+		opacity: .3;
+	}
+	.circle-content li:hover img {
+		opacity: 1;
+	}
+	.circle-content.open .name,
+	.circle-content [class$="-content"] {
+		display: none;
+	}
+
+	body.experience .experience-content {
+		display: block;
+		display: flex;
+	    flex-direction: column;
+	}
+	body.objective .objective-content {
+		display: block;
+		display: flex;
+	    flex-direction: column;
+	}
+	body.education .education-content {
+		display: block;
+		display: flex;
+	    flex-direction: column;
+	}
+	body.strengths .strengths-content {
+		display: block;
+		display: flex;
+	    flex-direction: column;
+	}
+	body.contact .contact-content {
+		display: block;
+		display: flex;
+	    flex-direction: column;
+	}
+	body.about .about-content {
+		display: block;
+		display: flex;
+	    flex-direction: column;
+	}
+
+	.objective-content span,
+	.about-content span {
+		color: var(--text-light)
+	}
+
+	.circle-content ul {
+		list-style: none;
+		padding: 0;
+	}
+	.circle-content ul li {
+		margin-bottom: 10px;
+	}
+	.circle-content span {
+		font-size: 16px;
+		font-weight: 300;
+		padding-left: 10px;
+	}
+
+	/* 
+	 * Overrides: Experience 
+	 */
+	 .companies {
+		position: relative;
+	 }
+	.companies .position {
+		font-size: 16px;
+		font-weight: 300;
+		padding-left: 12px;
+	}
+	.companies .job-description {
+		font-size: 16px;
+		font-weight: 300;
+		padding: 0 22px 0 12px;
+		margin: 0;
+
+		position: absolute;
+		top: 0;
+		background: #101010;
+		height: 100%;
+		border-radius: 12px;
+		background: linear-gradient(-90deg, black, #151515, black);
+	}
+	.companies ul,
+	.strengths-content ul {
+		padding-left: 10px;
+		list-style: circle;
+		margin-left: 6px;
+	}
+
+	/* 
+	 * Overrides: Strengths 
+	 */
+	 .strengths-content ul.strengths-skills {
+		list-style: circle;
+		margin-top: 30px;
+	 }
+	.strengths-content ul.strengths-skills li {
+		margin-bottom: 20px;
+	}
+	/* 
+	 * Overrides: Contact 
+	 */
+	 .contact-content li a {
+		color: var(--text-light);
+		text-decoration: none;
+	}
+	.contact-content li:hover a {
+		color: var(--text-white);
+	}
+
+	p.disclaimer {
+		color: var(--text-disabled);
+		font-size: smaller;
+	}
+
+	/* 
+	 * Back Button 
+	 */
+	.back {
+		position: relative;
+		font-size: 80px;
+		font-weight: 300;
+		color: #80800050;
+		/* top: -10px; */
+		transform: rotate(-90deg);
+		cursor: pointer;
+		text-shadow: 0 0 10px #000;
+		align-self: center;
+		margin-left: -80px;
+	}
+	.back:hover {
+		color: #808000;
+		transition: all .5s ease;
+	}
+
+	.hidden {
+		display: none;
+	}
+
+
+	.job-description .close:after {
+		content: "X";
+		position: absolute;
+		top: 0;
+		right: 0;
+		padding: 4px 10px;
+		border: solid 1px white;
+		border-radius: 50px;
+		cursor: pointer;
+	}
+
+/* 
+	div[class$="-description"] {
+		background: #101010;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 40px;
+	} */
+</style>
 <body>
 
-
-
-<div id="container" class="shadow">
-	<div id="header"></div>
-	<div id="content">
-		<div id="left-panel">
-            <div id="left">
-                <p class="title">Web UX<br/>Developer|Engineer</p>
-                <p class="photo">
-                <!-- img src="https://carlosmiqueo.com/images/CarlosMiqueo_.jpg"/ -->
-                <img src="https://carlosmiqueo.com/images/CarlosMiqueo-2019.jpg"/>
-                </p>
-                <p class="name">Carlos Miqueo</p>
-            </div>
+<div class="container">
+	<div class="resume">
+		<div class="categories">
+			<div class="objective"><a href="#objective">Objective</a></div>
+			<div class="experience"><a href="#experience">Experience</a></div>
+			<div class="education"><a href="#education">Education</a></div>
+			<div class="strengths"><a href="#strengths">Strengths</a></div>
+			<div class="contact"><a href="#contact">Contact</a></div>
+			<div class="about"><a href="#about">About</a></div>
 		</div>
-        
-		<div id="center">
-			<section id="objective">            
-                <h2></h2>
-				<p>I'm a professional web developer and Unix engineer for over 15 years. Currently I spent the mayority 
+
+		<div class="circle">
+			<!-- <div class="back hidden">back</div> -->
+		</div>
+
+		<div class="back hidden">back</div>
+
+		<div class="circle-content">
+			<h1 class="name">Carlos Miqueo<br><span class="title">Software Engineer | UX Web Developer</span></h1>
+
+			<div class="objective-content">
+				<h2>Objective</h2>
+				<p><b>Hello!</b></p>
+				<p>I'm a professional web developer and Unix engineer for over 20 years. Currently, I spent the mayority 
                     of my time working as a front-end engineer creating page templates and authorable components for 
                     Adobe Experience Manager (AEM), using the latest web frameworks and technologies 
                     (HTML5, Javascript, CSS, React, Node, Webpack, jQuery, etc...)</p>
                 
 				<p>I'm passionate about providing the best Web User eXperience for the user by minimizing unnecessary complexity
-					in the source code and the presentation output.
+					in the source code and the presentation output.</p>
+			</div>
 
-				</p>
-			</section>
-
-			<section id="experience">
+			<div class="experience-content">
 				<h2>Work Experience</h2>
+				<ul class="companies">
+					<li><b>Adobe</b> &nbsp;<em>(2007-now)</em>
+						<br><a class="position" href="#">Software Developer</a>
+						<div class="job-description hidden">
+							<span class="close"></span>
+							<h3>Software Developer @ Adobe</h3>
+							<ul>
+								<li>Create innovative front-end user experiences that connect to AI-driven recommendation&nbsp;engines.
+								<li>Develop AEM templates for the various Adobe's Learn and Support websites</li>
+								<li>Develop authorable AEM components and widgets for Adobe web tutorials</li>
+								<li>Internal web tools and scrips to interact with the AEM, Git, Node and Webpack build processes.</li>
+							</ul>						
+						</div>
 
-				<!-- ADOBE SYSTEMS -->
-				<a href="http://en.wikipedia.org/wiki/adobe" class="company first">Adobe Systems, Inc <span class="date">(2007-Present)</span><a>
-				<p class="position">AEM Front-End Developer <i class="time">2016-present</i></p>
-				<ul>
-					<li>Develop AEM templates for the various Adobe's Learn and Support websites</li>
-					<li>Develop authorable AEM components and widgets for Adobe web tutorials</li>
-                    <li>Internal web tools and scrips to interact with the AEM, Git, Node and Webpack build processes.</li>
+						<br><a class="position" href="#">Senior Web UX Engineer</a>
+						<div class="job-description hidden">
+							<span class="close"></span>
+							<h3>Senior Web UX Engineer @ Adobe</h3>
+							<ul>
+								<li>Lead role as Web and CSS expert in Adobe's Community Help & Learning TechTeam group.</li>
+								<li>Co-designed, developed, and maintained the user interface and HTML templates for all Adobe's web-based product documentation and online help.</li>    
+								<li>Develop several back-end tools and applications for internal use using PHP, Perl, HTML, JavaScript, jQuery, Flex, UNIX scripts, and MySQL.</li>
+							</ul>						
+						</div>
+						<br><a class="position" href="#">TechTeam Tools Specialist</a>
+						<div class="job-description hidden">
+							<span class="close"></span>
+							<h3>TechTeam Tools Specialist @ Adobe</h3>
+							<ul>
+								<li>Designed and develop several internal tools and applications for writers and engineers.</li>
+								<li>Successfully led a number of web related projects and initiatives including a Flex based tool used to create, manage, and track Adobe's website redirects.</li>
+								<li>Created and maintained back-end scripts, publishing tools, and web applications for internal use.</li>
+							</ul>
+						</div>
+					</li>
+					<li><b>Sun Microsystems</b> &nbsp;<em>(1999-2007)</em>
+						<br><a class="position" href="#">Web & Tools Engineer</a>
+						<div class="job-description hidden">
+							<span class="close"></span>
+							<h3>Web & Tools Engineer @ Sun Microsystems</h3>
+							<ul>
+								<li>Responsible for the installation, configuration, and administration of web servers and Wikis.</li>
+								<li>Created HTML and JavaScript based tools and scripts for writers and engineers.</li>
+								<li>Designed, developed, and deployed web based applications and tools for internal use.</li>
+								<li>Automate authoring and publishing processes for various live documentation web sites.</li>
+							</ul>
+						</div>
+						<br><a class="position" href="#">Web Master & Technologist</a>
+						<div class="job-description hidden">
+							<span class="close"></span>
+							<h3>Web Master & Technologist @ Sun Microsystems</h3>
+							<ul>
+								<li>Designed, developed, and maintained:
+									<ul>
+										<li>User Interface and HTML templates for web based documentation and wikis.</li>
+										<li>Back-end scripts, tools, and web applications for internal use.</li>
+										<li>Browser based HTML, CSS, and JavaScript applications.</li>
+										<li>Web based L10n drop site and processes.</li>
+										<li>UNIX based automation tools and processes to publish web content.</li>
+									</ul>
+								</li>
+								<li>Updated internal and external documentation web sites with new content.</li>
+								<li>Successfully lead a number of web related projects and initiatives.</li>
+							</ul>
+						</div>
+					</li>
+					<li><b>SGi</b> &nbsp;<em>(1994-1999)</em>
+						<br><span class="position">Web & Tools Engineer</span>
+					</li>
+					<li><span><br>See <a href="https://carlosmiqueo.com/resume.html">Full Resume &gt;&gt;</a></span></li>
 				</ul>
-                    
-                <p class="position">Lead Front-End Engineer <i class="time">2014-2016</i></p>
-				<ul>
-					<li>Lead role as Web and CSS expert in Adobe's Community Help & Learning TechTeam group.</li>
-					<li>Co-designed, developed, and maintained the user interface and HTML templates for all Adobe's web-based product documentation and online help.</li>    
-					<li>Develop several back-end tools and applications for internal use using PHP, Perl, HTML, JavaScript, jQuery, Flex, UNIX scripts, and MySQL.</li>
+			</div>
+
+			<div class="education-content">
+				<h2>Skills & Education</h2>
+				<ul class="education">
+					<li><b>Programming</b><br>
+						<span>UNIX, Perl, PHP, HTML5, CSS, Flex, Java, XML, DOM, AJAX, JavaScript, jQuery.</span></li>
+					<li><b>Platforms</b><br>
+						<span>UNIX, Linux, Windows, Mac OS, AIR, Android, and iOS.</span></li>
+					<li><b>Graphics</b><br>
+						<span>Adobe Photoshop, Adobe Illustrator, Adobe FlashBuilder, Adobe Acrobat.</span></li>
+					<li><b>Computer Graphics Design Degree</b><br>
+						<span>Foothill College, California</span></li>
+					<li><b>Web and UNIX Administration Certificate</b><br>
+						<span>Foothill College, California</span></li>
 				</ul>
-                    
-                <p class="position">Senior Web Engineer <i class="time">2010-2014 (5 years)</i></p>
+			</div>
+
+			<div class="strengths-content">
+				<h2>Business Skills & Education</h2>
+				<ul class="strengths-skills">
+					<li>Over 15 years of <b>experience</b> working with the latest web technologies.</li>
+					<li>Ability to work <b>efficiently</b> under pressure and tight deadlines.</li>
+					<li>Outstanding <b>creativity</b> and excellent communication skills.</li>
+					<li>Ability to code with the <b>latests</b> web technologies and HTML5 standards.</li>
+					<li>Working <b>knowledge</b> of latest web trends and technologies.</li>
+					<li>Ability to work <b>independently</b> while contributing and performing in a team environment.</li>
+					<li><span>See <a href="https://carlosmiqueo.com/resume.html">Full Resume &gt;&gt;</a></span></li>				
+				</ul>
+				<!-- <span>See <a href="./index.html">Full Resume &gt;&gt;</a></span> -->
+			</div>
+
+			<div class="contact-content">
+				<h2>Contact Information</h2>		
 				<ul>
-					<li>Lead role as Web and CSS expert in Adobe's Community Help & Learning TechTeam group.</li>
-					<li>Co-designed, developed, and maintained the user interface and HTML templates for all Adobe's web-based product documentation and online help.</li>    
-					<li>Develop several back-end tools and applications for internal use using PHP, Perl, HTML, JavaScript, jQuery, Flex, UNIX scripts, and MySQL.</li>
+					<li><a href="https://gmail.com"><img src="images/email.png" title="Email" />carlosmiqueo@gmail.com</a></li>
+					<li><a href="https://www.linkedin.com/in/cmiqueo/"><img src="images/linkedin.png" title="LinkedIn" />Carlos Miqueo</a></li>
+					<li><a href="https://www.facebook.com"><img src="images/facebook.png" title="Facebook" />@carlos,miqueo</a></li>
+					<li><a href="https://twitter.com/home"><img src="images/twitter.png" title="Twitter" />@carlos.cmiqueo</a></li>
+					<li><a href="https://www.instagram.com"><img src="images/instagram.png" title="Instagram" />@carlos.cmiqueo</a></li>
+					<li><a href="https://www.github.com"><img src="images/github.png" title="Github" />@carloscmiqueo</a></li>
 				</ul>
 				
-				<p class="position">TechTeam Tools Specialist <i class="time">2007-2010 (3 years)</i></p>
-				<ul>
-					<li>Designed and develop several internal tools and applications for writers and engineers.</li>
-					<li>Successfully led a number of web related projects and initiatives including a Flex based tool used to create, manage, and track Adobe's website redirects.</li>
-					<li>Created and maintained back-end scripts, publishing tools, and web applications for internal use.</li>
-				</ul>
+			</div>
 
-				<!-- SUN MICROSYSTEMS -->
-				<a href="http://en.wikipedia.org/wiki/Sun_Microsystems" class="company">Sun Microsystems, Inc <span class="date">(1999-2007)</span></a>
+			<div class="about-content">
+				<h2>Carlos Miqueo</h2>
+				<p>
+					Carlos has been crafting websites for over 20 years, both as a freelancer and for big names 
+					like Adobe and Sun Microsystems. He's got the design skills and tech know-how to build sites 
+					that are both beautiful and functional.
+				</p>
+				<p>
+					When he's not coding, you'll find him shredding mountain bike trails, flying over the water 
+					on his wingfoil, or jamming out on his guitar. He's also a passionate traveler who loves 
+					taking pictures and exploring new cultures and languages.
+				</p>
+				<p>
+					Born in Spain and now thriving in the San Francisco Bay Area, Carlos is a vibrant mix of 
+					creativity, technical expertise, and a thirst for adventure.
+				</p>
+				<p class="disclaimer">
+					Disclaimer: <i>This copy has been edited by AI technology.</i>
+				</p>
+			</div>
 
-				<p class="position">Web & Tools Engineer</p>
-				<ul>
-					<li>Responsible for the installation, configuration, and administration of web servers and Wikis.</li>
-					<li>Created HTML and JavaScript based tools and scripts for writers and engineers.</li>
-					<li>Designed, developed, and deployed web based applications and tools for internal use.</li>
-					<li>Automate authoring and publishing processes for various live documentation web sites.</li>
-				</ul>
 
-				<p class="position">Web Technologist</p>
-				<ul>
-					<li>Designed, developed, and maintained:
-						<ul>
-							<li>User Interface and HTML templates for web based documentation and wikis.</li>
-							<li>Back-end scripts, tools, and web applications for internal use.</li>
-							<li>Browser based HTML, CSS, and JavaScript applications.</li>
-							<li>Web based L10n drop site and processes.</li>
-							<li>UNIX based automation tools and processes to publish web content.</li>
-						</ul>
-					</li>
-					<li>Updated internal and external documentation web sites with new content.</li>
-					<li>Successfully lead a number of web related projects and initiatives.</li>
-				</ul>
-			</section>
 
-			<section id="education">
-				<h2>Technical Skills & Education</h2>
-				<ul>
-					<li><strong>Programming:</strong> UNIX, Perl, PHP, HTML5, CSS, Flex, Java, XML, DOM, AJAX, JavaScript, jQuery.</li>
-					<li><strong>Platforms:</strong> UNIX, Linux, Windows, Mac OS, AIR, Android, and iOS.</li>
-					<li><strong>Graphics:</strong> Adobe Photoshop, Adobe Illustrator, Adobe FlashBuilder, Adobe Acrobat.</li>
-					<li><strong>Computer Graphics Design <span class="screen-only">Associate's</span> Degree</strong> - Foothill College, California</li>
-					<li><strong>Web and UNIX Administration Certificate</strong> - Foothill College, California</li>
-				</ul>
-			</section>
-
-			<section id="skills">
-				<h2>Business Skills</h2>
-
-				<ul>
-					<li>Over 15 years of experience working with the latest web technologies.
-					<li>Ability to work efficiently under pressure and tight deadlines.
-					<li>Outstanding creativity and excellent communication skills.
-					<li>Ability to code with Web 2.0 technologies and HTML5 standards.
-					<li>Working knowledge of latest web trends and technologies.
-					<li>Ability to work independently while contributing and performing in a team environment.
-				</ul>
-			</section>
-			
-			<p class="references">References available upon request</p>
-		
-		</div>
-		
-		<div id="right-panel">
-            <div id="right">
-				<a href="https://gmail.com"><img src="https://carlosmiqueo.com/images/email.png" title="Email" /></a>
-                <a href="https://www.linkedin.com/in/cmiqueo/"><img src="https://carlosmiqueo.com/images/linkedin.png" title="LinkedIn" /></a>
-                <!-- <img src="https://carlosmiqueo.com/images/googleplus.png" title="Google+" /> -->
-                <a href="https://www.facebook.com"><img src="https://carlosmiqueo.com/images/facebook.png" title="Facebook" /></a>
-                <a href="https://twitter.com/home"><img src="https://carlosmiqueo.com/images/twitter.png" title="Twitter" /></a>
-                <img src="https://carlosmiqueo.com/images/flikr.png" title="Flikr" />
-            </div>
 		</div>
 	</div>
-          
-    <footer>
-        <div id="footer">Carlos Miqueo - Santa Clara, CA 95051 | carlosmiqueo.com | carlosmiqueo at gmail.com | 408.475.--.--</div>
-    </footer>	
-
 </div>
-        
 
-<script type="text/JavaScript">
-	const DEBUG = document.location.search.indexOf('debug=true') !== -1;
-    $(document).ready(function(){
-        $('#header img').fadeIn(2000);
-		$('.company').animate({"opacity": '1', "margin-right": '0'}, {
-			duration:1600, 
-			complete:function(){
-				$('h2').animate({"width": '100%'}, {duration:3000});
-			}		
-		});
-		var timesShown = 0;
-		$('.photo img').mouseover(function(){
-            timesShown++;
-            if ( $('#left').width() == 238 ){
-                if (timesShown == 1 || timesShown % 3 === 0 ){
-                    $('.photo img').animate({
-                        'width': '140px',
-                        'height': '140px',
-                        'margin-bottom': '-80px',
-                        'opacity':'.9'},
-                        1000)
-                    .delay( 5000 ).animate({
-                        'width': '60px',
-                        'height': '60px',
-                        'margin-bottom': '0px',
-                        'opacity':'.2'},
-                        1000)
-                    ;
-                }
-            }else{
-                if (timesShown == 1 || timesShown % 3 === 0 ){
-                $('.photo img')
-                    .animate({
-                        'opacity':'.9'},
-                        1000)
-                    .delay( 5000 ).animate({
-                        'opacity':'.2'},
-                        1000);
-                }
-            }
-		});
+<script>
+const categories = document.querySelectorAll('.categories div');
+const positions = document.querySelectorAll('.position');
+const closeBtns = document.querySelectorAll('.close');
+const back = document.querySelector('.back');
 
-		// $(window).scroll(function() {
-        //     var scroll = $(window).scrollTop();
-        //     var body = $("body");
-        //     var windowWidth = $(window).width();
-        //     var headerHeight = $("#header").height();
-        //     if (windowWidth > 640 && scroll >= headerHeight + 20) {
-        //         body.addClass("fixed");
-        //     } else {
-        //         body.removeClass("fixed"); 
-        //     }
-        // });
-        
-		var centerOffSetLeft;
-		function setOffset() {
-			centerOffSetLeft = document.querySelector('#center').offsetLeft;
-			if (DEBUG) console.log(centerOffSetLeft);
-		}
+categories.forEach(category => {
+	category.addEventListener('click', (event) => {
+		event.preventDefault();
+		const categoryName = category.classList[0];
+		categories.forEach(div => {
+			div.classList.remove('selected');
+		})
+		event.target.parentElement.classList.add('selected');
+		const viewer = document.querySelector('.circle-content');
+		viewer.classList = "circle-content open";
+		document.body.classList = '';
+		document.body.classList.add(categoryName);
+		document.querySelector('.back').classList.remove('hidden');
+		location.hash = categoryName;
+	})
+})
 
-        $(window).scroll(function() {
-            var scroll = $(window).scrollTop();
-            var body = $("body");
-            var windowWidth = $(window).width();
-            var headerHeight = $("#header").height();
-            if (windowWidth > 640 && scroll >= headerHeight + 20) {
-				// console.log(centerOffSetLeft)
-				document.querySelector('#center').style.marginLeft = centerOffSetLeft + "px";
-                body.addClass("fixed");
-            } else {
-                body.removeClass("fixed"); 
-				document.querySelector('#center').style.marginLeft = 0;
-            }
-        });
 
-		window.onload = setOffset;
-		window.onresize = setOffset;
-		
-    });
+positions.forEach(position => {
+	position.addEventListener('click', (event) => {
+		event.preventDefault();
+		clearDescriptions();
+		event.target.nextElementSibling.classList.toggle('hidden');
+	})
+})
+
+closeBtns.forEach(button => {
+	button.addEventListener('click', () => {
+		event.target.parentElement.classList.toggle('hidden');
+	})
+})
+
+back.addEventListener('click', () => {
+	location.hash = '';
+	const viewer = document.querySelector('.circle-content');
+	viewer.classList = "circle-content";
+	document.body.classList = '';
+	document.querySelector('.back').classList.add('hidden');
+	categories.forEach(div => {
+		div.classList.remove('selected');
+	})
+	clearDescriptions();
+})
+
+function clearDescriptions() {
+	document.querySelectorAll('.job-description').forEach(description => {
+		description.classList.add('hidden');
+	})
+}
+
 </script>
+
+
+<svg class="hidden">
+	<defs>
+	  	<g id="objective-svg">
+			<style type="text/css">
+				.st0{fill:#ffffff;}
+			</style>
+			<g>
+				<polygon class="st0" points="62.455,159.454 86.372,159.454 86.372,86.367 159.449,86.367 159.449,62.459 62.455,62.459 "/>
+				<polygon class="st0" points="425.638,159.454 449.546,159.454 449.546,62.459 352.551,62.459 352.551,86.367 425.628,86.367 "/>
+				<polygon class="st0" points="425.628,425.633 352.551,425.633 352.551,449.541 449.546,449.541 449.546,352.556 425.628,352.556 "/>
+				<polygon class="st0" points="86.372,352.556 62.455,352.556 62.455,449.541 159.449,449.541 159.449,425.633 86.372,425.633 "/>
+				<rect x="244.041" class="st0" width="23.917" height="113.385"/>
+				<rect x="244.041" y="398.615" class="st0" width="23.917" height="113.385"/>
+				<rect x="398.62" y="244.046" class="st0" width="113.375" height="23.909"/>
+				<rect x="0.005" y="244.046" class="st0" width="113.384" height="23.909"/>
+				<polygon class="st0" points="265.306,199.303 246.703,199.303 246.703,246.698 199.308,246.698 199.308,265.302 246.703,265.302 
+					246.703,312.697 265.306,312.697 265.306,265.302 312.692,265.302 312.692,246.698 265.306,246.698 	"/>
+			</g>
+		</g>
+	</defs>
+</svg>
+
+
 
 </body>
 </html>
 
     
-
 
 
