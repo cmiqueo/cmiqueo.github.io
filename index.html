@@ -529,7 +529,6 @@ categories.forEach(category => {
 	})
 })
 
-
 positions.forEach(position => {
 	position.addEventListener('click', (event) => {
 		event.preventDefault();
@@ -545,15 +544,19 @@ closeBtns.forEach(button => {
 })
 
 back.addEventListener('click', () => {
-	location.hash = '';
-	const viewer = document.querySelector('.circle-content');
-	viewer.classList = "circle-content";
-	document.body.classList = '';
-	document.querySelector('.back').classList.add('hidden');
-	categories.forEach(div => {
-		div.classList.remove('selected');
-	})
-	clearDescriptions();
+	if (document.querySelector(".job-description:not(.hidden)")) {
+		document.querySelector(".job-description:not(.hidden)").classList.add('hidden');
+	} else {
+		location.hash = '';
+		const viewer = document.querySelector('.circle-content');
+		viewer.classList = "circle-content";	
+		document.body.classList = '';
+		document.querySelector('.back').classList.add('hidden');
+		categories.forEach(div => {
+			div.classList.remove('selected');
+		})
+		clearDescriptions();
+	}
 })
 
 function clearDescriptions() {
