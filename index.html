@@ -319,25 +319,74 @@
 		border-radius: 50px;
 		cursor: pointer;
 	}
+
+	@media (max-width: 480px) {
+		.container {
+		    min-height: 100%;
+			transition: all .5s ease;
+		}
+		body.open .resume {
+			flex-direction: column;
+		}
+		body.open .circle-content {
+			overflow: auto;
+		}
+		body.open .container {
+		    height: 100%;
+		}
+		.resume {
+			width: 90%;
+			/* max-width: none; */
+		}
+		.name {
+			transform: rotate(-90deg);
+		    margin: 0;
+		    padding: 0;
+		    width: 480px;
+		    height: 480px;
+		    /* overflow: hidden; */
+		    text-align: center;
+		}
+		.name span.title {
+		    font-size: 18px;
+		}
+		.resume-content {
+		    display: flex;
+			gap: 20px;
+			padding: 20px;
+			
+		}
+		.circle-content {
+			overflow: hidden;
+			padding: 0 30px;
+		    max-width: 100%;
+		}
+		.circle-content h2 {
+			margin: 0;
+			border-top: solid 1px #666;
+    		padding-top: 12px;
+		}
 </style>
 <body>
 
 <div class="container">
 	<div class="resume">
-		<div class="categories">
-			<div class="objective"><a href="#objective">Objective</a></div>
-			<div class="experience"><a href="#experience">Experience</a></div>
-			<div class="education"><a href="#education">Education</a></div>
-			<div class="strengths"><a href="#strengths">Strengths</a></div>
-			<div class="contact"><a href="#contact">Contact</a></div>
-			<div class="about"><a href="#about">About</a></div>
-		</div>
+		<div class="resume-content">
+			<div class="categories">
+				<div class="objective"><a href="#objective">Objective</a></div>
+				<div class="experience"><a href="#experience">Experience</a></div>
+				<div class="education"><a href="#education">Education</a></div>
+				<div class="strengths"><a href="#strengths">Strengths</a></div>
+				<div class="contact"><a href="#contact">Contact</a></div>
+				<div class="about"><a href="#about">About</a></div>
+			</div>
 
-		<div class="circle">
-			<!-- <div class="back hidden">back</div> -->
-		</div>
+			<div class="circle">
+				<!-- <div class="back hidden">back</div> -->
+			</div>
 
-		<div class="back hidden">back</div>
+			<div class="back hidden">back</div>
+		</div>
 
 		<div class="circle-content">
 			<h1 class="name">Carlos Miqueo<br><span class="title">Software Engineer | UX Web Developer</span></h1>
@@ -521,7 +570,7 @@ categories.forEach(category => {
 		event.target.parentElement.classList.add('selected');
 		const viewer = document.querySelector('.circle-content');
 		viewer.classList = "circle-content open";
-		document.body.classList = '';
+		document.body.classList = 'open';
 		document.body.classList.add(categoryName);
 		document.querySelector('.back').classList.remove('hidden');
 		location.hash = categoryName;
