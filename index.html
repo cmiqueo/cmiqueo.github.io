@@ -330,19 +330,16 @@
 		.container {
 		    min-height: 100%;
 			transition: all .5s ease;
+			height: 90vh;
 		}
 		body.open .resume {
 			flex-direction: column;
 		}
-		/* body.open .circle-content {
-			overflow: auto;
-		} */
 		body.open .container {
 		    height: 100%;
 		}
 		.resume {
 			width: 90%;
-			/* max-width: none; */
 		}
 		.name {
 			transform: rotate(-90deg);
@@ -350,7 +347,6 @@
 		    padding: 0;
 		    width: 480px;
 		    height: 480px;
-		    /* overflow: hidden; */
 		    text-align: center;
 		}
 		.name span.title {
@@ -372,6 +368,12 @@
 			margin: 0;
 			border-top: solid 1px #666;
     		padding-top: 12px;
+		}
+		.companies .job-description {
+			position: relative;
+		}
+		.companies .job-description h3 {
+			display: none;
 		}
 </style>
 <body>
