@@ -44,7 +44,7 @@
 		align-items: center;
 		font-family: 'Open Sans', sans-serif;
 		gap: 25px;
-		transition: all .5s ease;
+		/* transition: all .5s ease; */
 	}
 	.name {
 		font-size: 36px;
@@ -336,13 +336,18 @@
 		    min-height: 100%;
 			transition: all .5s ease;
 			height: 90vh;
+			justify-content: flex-start;
+		    margin-top: 24%;
+			transition: all .5s ease;
+		}
+		body.open .container {
+		    height: 100%;
+			margin-top: 0;
 		}
 		body.open .resume {
 			flex-direction: column;
 		}
-		body.open .container {
-		    height: 100%;
-		}
+
 		.resume {
 			width: 90%;
 		}
