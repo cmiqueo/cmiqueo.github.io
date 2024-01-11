@@ -331,6 +331,18 @@
 		cursor: pointer;
 	}
 
+	.about-content img.photo {
+		width: 80px;
+		opacity: .6;
+		border-radius: 6px;
+		float: left;
+		width: 7rem;
+	}
+	.about-content img.photo:hover {
+		transition: all .5s ease;
+		opacity: 1;
+	}
+
 	@media (max-width: 480px) {
 		.container {
 		    min-height: 100%;
@@ -384,6 +396,9 @@
 		}
 		.companies .job-description h3 {
 			display: none;
+		}
+		.about-content img.photo {
+			width: 4rem;
 		}
 </style>
 <body>
@@ -547,9 +562,11 @@
 				<h2>Carlos Miqueo</h2>
 				<div>
 					<p>
+						<img class="photo" src="//carlosmiqueo.com/images/CarlosMiqueo-2019.jpg" alt="Carlos Miqueo" />
 						Carlos has been crafting websites for over 20 years, both as a freelancer and for big names 
 						like Adobe and Sun Microsystems. He's got the design skills and tech know-how to build sites 
 						that are both beautiful and functional.
+						<br clear="all" />
 					</p>
 					<p>
 						When he's not coding, you'll find him shredding mountain bike trails, flying over the water 
