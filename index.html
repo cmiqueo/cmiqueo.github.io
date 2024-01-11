@@ -23,6 +23,7 @@
 		--text-color: #bbb;
 		--text-light: #ddd;
 		--text-white: #fff;
+		--text-dark: #999;
 		--text-disabled: #aaaaaa80;
 		--bg-color: #000;
 	}
@@ -272,8 +273,13 @@
 	}
 
 	p.disclaimer {
-		color: var(--text-disabled);
+		color: var(--text-dark);
 		font-size: smaller;
+	}
+	span.small {
+		font-size: smaller;
+		color: #999;
+		padding-left: 0;
 	}
 	/* 
 	 * About: Contact 
@@ -479,7 +485,7 @@
 					<li><b>SGi</b> &nbsp;<em>(1994-1999)</em>
 						<br><span class="position">Web & Tools Engineer</span>
 					</li>
-					<li><span><br>See <a href="https://carlosmiqueo.com/resume.html">Full Resume &gt;&gt;</a></span></li>
+					<li><span class="small"><br>See <a href="https://carlosmiqueo.com/resume.html">Full Resume &gt;&gt;</a></span></li>
 				</ul>
 			</div>
 
@@ -508,9 +514,8 @@
 					<li>Ability to code with the <b>latests</b> web technologies and HTML5 standards.</li>
 					<li>Working <b>knowledge</b> of latest web trends and technologies.</li>
 					<li>Ability to work <b>independently</b> while contributing and performing in a team environment.</li>
-					<li><span>See <a href="https://carlosmiqueo.com/resume.html">Full Resume &gt;&gt;</a></span></li>				
+					<li><span class="small">See <a href="https://carlosmiqueo.com/resume.html">Full Resume &gt;&gt;</a></span></li>				
 				</ul>
-				<!-- <span>See <a href="./index.html">Full Resume &gt;&gt;</a></span> -->
 			</div>
 
 			<div class="contact-content">
@@ -518,9 +523,9 @@
 				<ul>
 					<li><a href="https://gmail.com"><img src="images/email.png" title="Email" />carlosmiqueo@gmail.com</a></li>
 					<li><a href="https://www.linkedin.com/in/cmiqueo/"><img src="images/linkedin.png" title="LinkedIn" />Carlos Miqueo</a></li>
-					<li><a href="https://www.facebook.com"><img src="images/facebook.png" title="Facebook" />@carlos,miqueo</a></li>
-					<li><a href="https://twitter.com/home"><img src="images/twitter.png" title="Twitter" />@carlos.cmiqueo</a></li>
-					<li><a href="https://www.instagram.com"><img src="images/instagram.png" title="Instagram" />@carlos.cmiqueo</a></li>
+					<li><a href="https://www.facebook.com"><img src="images/facebook.png" title="Facebook" />@carlosmiqueo</a></li>
+					<li><a href="https://twitter.com/home"><img src="images/twitter.png" title="Twitter" />@carloscmiqueo</a></li>
+					<li><a href="https://www.instagram.com"><img src="images/instagram.png" title="Instagram" />@carloscmiqueo</a></li>
 					<li><a href="https://www.github.com"><img src="images/github.png" title="Github" />@carloscmiqueo</a></li>
 				</ul>
 				
@@ -544,7 +549,7 @@
 						creativity, technical expertise, and a thirst for adventure.
 					</p>
 					<p class="disclaimer">
-						Disclaimer: <i>This copy has been edited by AI technology.</i>
+						Disclaimer: <i>This copy may have been edited by Artificial Inteligence.</i>
 					</p>
 				</div>
 			</div>
@@ -556,63 +561,76 @@
 </div>
 
 <script>
-const categories = document.querySelectorAll('.categories div');
-const positions = document.querySelectorAll('.position');
-const closeBtns = document.querySelectorAll('.close');
-const back = document.querySelector('.back');
+(function() {
+	const categories = document.querySelectorAll('.categories div');
+	const positions = document.querySelectorAll('.position');
+	const closeBtns = document.querySelectorAll('.close');
+	const back = document.querySelector('.back');
+	const isMobile = window.matchMedia("(max-width: 480px)").matches;
 
-categories.forEach(category => {
-	category.addEventListener('click', (event) => {
-		event.preventDefault();
-		const categoryName = category.classList[0];
-		categories.forEach(div => {
-			div.classList.remove('selected');
+	categories.forEach(category => {
+		category.addEventListener('click', (event) => {
+			event.preventDefault();
+			const categoryName = category.classList[0];
+			categories.forEach(div => {
+				div.classList.remove('selected');
+			})
+			event.target.parentElement.classList.add('selected');
+			const viewer = document.querySelector('.circle-content');
+			viewer.classList = "circle-content open";
+			document.body.classList = 'open';
+			document.body.classList.add(categoryName);
+			document.querySelector('.back').classList.remove('hidden');
+			location.hash = categoryName;
 		})
-		event.target.parentElement.classList.add('selected');
-		const viewer = document.querySelector('.circle-content');
-		viewer.classList = "circle-content open";
-		document.body.classList = 'open';
-		document.body.classList.add(categoryName);
-		document.querySelector('.back').classList.remove('hidden');
-		location.hash = categoryName;
 	})
-})
 
-positions.forEach(position => {
-	position.addEventListener('click', (event) => {
-		event.preventDefault();
-		clearDescriptions();
-		event.target.nextElementSibling.classList.toggle('hidden');
-	})
-})
-
-closeBtns.forEach(button => {
-	button.addEventListener('click', () => {
-		event.target.parentElement.classList.toggle('hidden');
-	})
-})
-
-back.addEventListener('click', () => {
-	if (document.querySelector(".job-description:not(.hidden)")) {
-		document.querySelector(".job-description:not(.hidden)").classList.add('hidden');
-	} else {
-		location.hash = '';
-		const viewer = document.querySelector('.circle-content');
-		viewer.classList = "circle-content";	
-		document.body.classList = '';
-		document.querySelector('.back').classList.add('hidden');
-		categories.forEach(div => {
-			div.classList.remove('selected');
+	positions.forEach(position => {
+		position.addEventListener('click', (event) => {
+			event.preventDefault();
+			clearDescriptions();
+			event.target.nextElementSibling.classList.toggle('hidden');
 		})
-		clearDescriptions();
+	})
+
+	closeBtns.forEach(button => {
+		button.addEventListener('click', () => {
+			event.target.parentElement.classList.toggle('hidden');
+		})
+	})
+
+	back.addEventListener('click', () => {
+		if (document.querySelector(".job-description:not(.hidden)")) {
+			document.querySelector(".job-description:not(.hidden)").classList.add('hidden');
+		} else {
+			location.hash = '';
+			const viewer = document.querySelector('.circle-content');
+			viewer.classList = "circle-content";	
+			document.body.classList = '';
+			document.querySelector('.back').classList.add('hidden');
+			categories.forEach(div => {
+				div.classList.remove('selected');
+			})
+			clearDescriptions();
+		}
+	})
+
+	function clearDescriptions() {
+		document.querySelectorAll('.job-description').forEach(description => {
+			description.classList.add('hidden');
+		})
 	}
-})
 
-function clearDescriptions() {
-	document.querySelectorAll('.job-description').forEach(description => {
-		description.classList.add('hidden');
-	})
-}
+	if (isMobile) {
+		document.querySelector('.back').innerHTML = 'home';
+	}
+
+	if (location.hash) {
+		const hash = location.hash.replace('#', '');
+		document.querySelector(`.${hash} a`).click();
+	}
+
+})();
 
 </script>
 
