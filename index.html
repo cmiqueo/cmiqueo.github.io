@@ -1,3 +1,5 @@
+
+
 <!doctype html>
 <!--            _                       _                        
   ___ __ _ _ __| | ___  ___   _ __ ___ (_) __ _ _   _  ___  ___  
@@ -44,7 +46,7 @@
 	.name {
 		font-size: 36px;
 		line-height: 1;
-		margin-top: 25%;
+		/* margin-top: 25%; */
 		margin-left: 60px;
 		color: #fff;
 	}
@@ -129,8 +131,9 @@
 		position: relative;
 		margin-left: -30px;
 		max-height: 420px;
-		overflow-y: auto;
+		overflow-y: hidden;
 		margin-top: -20px;
+		scroll-behavior: smooth;
 	}
 	.circle-content h2 {
 		font-size: 28px;
@@ -165,38 +168,45 @@
 	.circle-content li:hover img {
 		opacity: 1;
 	}
-	.circle-content.open .name,
 	.circle-content [class$="-content"] {
-		display: none;
+		visibility: hidden;
 	}
-
-	body.experience .experience-content {
-		display: block;
+	.circle-content .intro-content {
+		visibility: visible;
+		padding-top: 160px;
+	}
+	body.open .intro-content {
+		visibility: hidden;
+	}
+	body.objective .objective-content {
+		visibility: visible;
 		display: flex;
 	    flex-direction: column;
 	}
-	body.objective .objective-content {
-		display: block;
+	body.experience .experience-content {
+		visibility: visible;
 		display: flex;
 	    flex-direction: column;
 	}
 	body.education .education-content {
-		display: block;
+		visibility: visible;
 		display: flex;
 	    flex-direction: column;
 	}
 	body.strengths .strengths-content {
-		display: block;
+		visibility: visible;
 		display: flex;
 	    flex-direction: column;
 	}
 	body.contact .contact-content {
-		display: block;
+		/* display: block; */
+		visibility: visible;
 		display: flex;
 	    flex-direction: column;
 	}
 	body.about .about-content {
-		display: block;
+		/* display: block; */
+		visibility: visible;
 		display: flex;
 	    flex-direction: column;
 	}
@@ -402,11 +412,13 @@
 		</div>
 
 		<div class="circle-content">
-			<h1 class="name">Carlos Miqueo<br>
-				<span class="title">Software Engineer | UX Web Developer</span>
-			</h1>
+			<div id="intro" class="intro-content">
+				<h1 class="name">Carlos Miqueo<br>
+					<span class="title">Software Engineer | UX Web Developer</span>
+				</h1>
+			</div>
 
-			<div class="objective-content">
+			<div id="objective" class="objective-content">
 				<h2>Objective</h2>
 				<div>
 				<p><b>Hello!</b></p>
@@ -422,7 +434,7 @@
 				</div>
 			</div>
 
-			<div class="experience-content">
+			<div id="experience" class="experience-content">
 				<h2>Work Experience</h2>
 				<ul class="companies">
 					<li><b>Adobe</b> &nbsp;<em>(2007-now)</em>
@@ -497,7 +509,7 @@
 				</ul>
 			</div>
 
-			<div class="education-content">
+			<div id="education" class="education-content">
 				<h2>Skills & Education</h2>
 				<ul class="education">
 					<li><b>Programming</b><br>
@@ -513,7 +525,7 @@
 				</ul>
 			</div>
 
-			<div class="strengths-content">
+			<div id="strengths" class="strengths-content">
 				<h2>Business Strengths</h2>
 				<ul class="strengths-skills">
 					<li>Over 15 years of <b>experience</b> working with the latest web technologies.</li>
@@ -526,7 +538,7 @@
 				</ul>
 			</div>
 
-			<div class="contact-content">
+			<div id="contact" class="contact-content">
 				<h2>Contact Information</h2>		
 				<ul>
 					<li><a href="https://gmail.com"><img src="images/email.png" title="Email" />carlosmiqueo@gmail.com</a></li>
@@ -538,7 +550,7 @@
 				</ul>
 			</div>
 
-			<div class="about-content">
+			<div id="about" class="about-content">
 				<h2>Carlos Miqueo</h2>
 				<div>
 					<p>
@@ -578,16 +590,16 @@
 		category.addEventListener('click', (event) => {
 			event.preventDefault();
 			const categoryName = category.classList[0];
+			window.location = `#${categoryName}`;
+
 			categories.forEach(div => {
 				div.classList.remove('selected');
 			})
 			event.target.parentElement.classList.add('selected');
-			const viewer = document.querySelector('.circle-content');
-			viewer.classList = "circle-content open";
 			document.body.classList = 'open';
 			document.body.classList.add(categoryName);
 			document.querySelector('.back').classList.remove('hidden');
-			location.hash = categoryName;
+
 		})
 	})
 
@@ -609,10 +621,10 @@
 		if (document.querySelector(".job-description:not(.hidden)")) {
 			document.querySelector(".job-description:not(.hidden)").classList.add('hidden');
 		} else {
-			location.hash = '';
+			location.hash = '#intro';
 			const viewer = document.querySelector('.circle-content');
 			viewer.classList = "circle-content";	
-			document.body.classList = '';
+			document.body.classList = 'intro';
 			document.querySelector('.back').classList.add('hidden');
 			categories.forEach(div => {
 				div.classList.remove('selected');
@@ -631,10 +643,12 @@
 		document.querySelector('.back').innerHTML = 'home';
 	}
 
+	/* Needs Work
 	if (location.hash) {
 		const hash = location.hash.replace('#', '');
 		document.querySelector(`.${hash} a`).click();
-	}
+	} 
+	*/
 
 })();
 </script>
