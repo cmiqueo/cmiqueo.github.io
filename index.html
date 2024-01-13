@@ -339,60 +339,33 @@
 
 	@media (max-width: 480px) {
 		.container {
-		    min-height: 100%;
-			transition: all .5s ease;
-			height: 90vh;
-			justify-content: flex-start;
-		    margin-top: 24%;
-			transition: all .5s ease;
-		}
-		body.open .container {
-		    height: 100%;
-			margin-top: 0;
-		}
-		body.open .resume {
-			flex-direction: column;
+			width: 100%;
+			height: 100vh;
+			overflow-x: auto;
 		}
 		.resume {
-			width: 90%;
-		}
-		.name {
-			transform: rotate(-90deg);
-		    margin: 0;
-		    padding: 0;
-		    width: 480px;
-		    height: 480px;
-		    text-align: center;
-		}
-		.name span.title {
-		    font-size: 18px;
-		}
-		.resume-content {
-		    display: flex;
-			gap: 20px;
-			padding: 20px;
-			
+			width: calc(100vw * 8);
+			max-width: none	;
 		}
 		.circle-content {
-			overflow: hidden;
-			padding: 0 30px;
-		    max-width: 100%;
 			max-height: none;
+			display: flex;
+			flex-direction: row;
+			gap: 40px;
+			width: calc(100vw * 7);
 		}
-		.circle-content h2 {
-			margin: 0;
-			border-top: solid 1px #666;
-    		padding-top: 12px;
+		.circle-content [class$="-content"] {
+			visibility: visible;
+			width: 100vw;
 		}
-		.companies .job-description {
-			position: relative;
+		.circle-content .intro-content {
+			padding-top: 0;
 		}
-		.companies .job-description h3 {
-			display: none;
+		.name{
+			transform: rotate(-90deg);
 		}
-		.about-content img.photo {
-			width: 5rem;
-		}
+	}
+
 </style>
 <body>
 
