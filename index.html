@@ -717,17 +717,14 @@
 	}
 
 	// deep linking in desktop
-	if (!isMobile && location.hash) {
-		const hash = location.hash.replace('#', '');
-		document.querySelector(`.${hash} a`).click();
-	} 
-
-	// disable deep linking in mobile
-	if (isMobile) {
-		document.querySelector('.back').innerHTML = 'home';
-		if (location.hash) {
+	// if (!isMobile && location.hash) {
+	// 	const hash = location.hash.replace('#', '');
+	// 	document.querySelector(`.${hash} a`).click();
+	// }
+	
+	// never mind, deep linking is annoying.
+	if (location.hash) {
 			window.location = '';
-		}
 	}
 })();
 </script>
