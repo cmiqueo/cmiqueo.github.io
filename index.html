@@ -52,6 +52,10 @@
 		margin-left: 60px;
 		color: #fff;
 	}
+	.circle-name {
+		display: none;
+	}
+	
 	.name span.title {
 		font-size: 24px;
 		font-style: normal;
@@ -135,7 +139,7 @@
 		margin-left: -30px;
 		max-height: 420px;
 		overflow-y: hidden;
-		margin-top: -20px;
+		margin-top: -18px;
 		scroll-behavior: smooth;
 	}
 	.resume-content h2 {
@@ -359,9 +363,11 @@
 			min-height: 100vh;
 			justify-content: flex-start;
 			overflow: hidden;
+			justify-content: center;
 		}
 		body.open .container {
 			overflow-y: auto;
+			justify-content: flex-start;
 		}
 		.resume {
 			flex-direction: column;
@@ -377,6 +383,27 @@
 		}
 		.resume-menu {
 			margin: 40px 20px 60px;
+		}
+		.circle-name {
+			display: block;
+			transform: rotate(-90deg);
+			text-align: center;
+			text-wrap: nowrap;
+			margin: 40px;
+			font-size: 36px;
+		    line-height: 1;
+		}
+		.name {
+			margin: 0;
+			font-size: 2rem;
+		}
+		.name span.title {
+    		font-size: 18px;
+		}
+		.circle-name span.title {
+			font-size: 18px;
+			font-weight: 300;
+			color: var(--text-dark);
 		}
 		body.open .resume-menu {
 			margin: 4px 0;
@@ -394,9 +421,11 @@
 			overflow-y: auto;
 			overflow-y: hidden;
 			width: 100%;
+			display: none;
 		}
 		body.open .resume-content {
 			overflow-y: auto;
+			display: block;
 		}
 		body.open  .resume-content h2 {
 			padding-top: 56px;
@@ -427,16 +456,11 @@
 			opacity: 1;
 			padding-bottom: 20px;
 		}
-		.resume-content .intro-content {
-	    	padding-top: 30px;
+		body.open .resume-content .intro-content {
+	    	padding-top: 10px;
+			margin-bottom: 0;
 		}
-		.name {
-			margin: 0;
-			font-size: 2rem;
-		}
-		.name span.title {
-    		font-size: 18px;
-		}
+	}
 
 </style>
 <body>
@@ -453,6 +477,9 @@
 				<div class="about"><a href="#about">About</a></div>
 			</div>
 			<div class="circle"></div>
+			<h1 class="circle-name">Carlos Miqueo<br>
+				<span class="title">Software Engineer | UX Web Developer</span>
+			</h1>
 			<div class="back hidden">back</div>
 		</div>
 
