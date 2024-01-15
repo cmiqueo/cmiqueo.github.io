@@ -151,7 +151,7 @@
 	}
 	.resume-content b {
 		font-weight: 400;
-		color: var(--text-white);
+		color: var(--text-light);
 	}
 	.resume-content em {
 		font-size: 14px;
@@ -257,6 +257,11 @@
 		font-size: 16px;
 		font-weight: 300;
 		padding-left: 12px;
+	}
+	.companies .position:before {
+		content: '• ';
+		padding-right: 5px;
+		text-decoration: none;
 	}
 	.companies .job-description {
 		font-size: 16px;
@@ -711,21 +716,19 @@
 		})
 	}
 
+	// deep linking in desktop
+	if (!isMobile && location.hash) {
+		const hash = location.hash.replace('#', '');
+		document.querySelector(`.${hash} a`).click();
+	} 
+
+	// disable deep linking in mobile
 	if (isMobile) {
 		document.querySelector('.back').innerHTML = 'home';
 		if (location.hash) {
 			window.location = '';
 		}
-		
 	}
-
-	/* Needs Work
-	if (location.hash) {
-		const hash = location.hash.replace('#', '');
-		document.querySelector(`.${hash} a`).click();
-	} 
-	*/
-
 })();
 </script>
 </body>
