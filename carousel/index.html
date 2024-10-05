@@ -1,0 +1,485 @@
+
+<!--
+   _____           _           _ _            _    _ _ _          _    _   _                       _   
+  / ____|         (_)         (_) |          | |  (_) | |        | |  | | | |                     | |  
+ | |    _   _ _ __ _  ___  ___ _| |_ _   _   | | ___| | | ___  __| |  | |_| |__   ___     ___ __ _| |_ 
+ | |   | | | | '__| |/ _ \/ __| | __| | | |  | |/ / | | |/ _ \/ _` |  | __| '_ \ / _ \   / __/ _` | __|
+ | |___| |_| | |  | | (_) \__ \ | |_| |_| |  |   <| | | |  __/ (_| |  | |_| | | |  __/  | (_| (_| | |_ 
+  \_____\__,_|_|  |_|\___/|___/_|\__|\__, |  |_|\_\_|_|_|\___|\__,_|   \__|_| |_|\___|   \___\__,_|\__|
+                                      __/ |                                                            
+                                     |___/                                                                                              
+       ___         __      __   __   __   ___       __           __  ___     ___                  
+        |  |__| | /__`    /  ` /  \ |  \ |__     | /__`    |\ | /  \  |     |__  | |\ |  /\  |     
+        |  |  | | .__/    \__, \__/ |__/ |___    | .__/    | \| \__/  |     |    | | \| /~~\ |___                                                                                                                                                                             
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaaS Carousel Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: "Open Sans", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+        }
+        *:focus {
+            outline: #4883ff solid 2px;
+            outline: red solid 3px;
+            outline-style: groove;
+            outline-offset: 3px;
+            border-radius: 4px;
+        }
+        .container {
+            position: relative;
+            width: 80%;
+            margin: auto;
+        }
+        .linkoverlay-option {
+            margin: 20px 45px;
+            display: flex;
+            gap: 3px;
+        }
+        a {
+            color: #5050AA;
+            text-decoration: none;
+        }
+        a.linkBlocker {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            bottom: 6px;
+            right: 6px;
+            background: transparent;
+            display: none;
+        }
+        body.link-overlay a.linkBlocker {
+            display: block;
+        }
+        h1 {
+            letter-spacing: -2px;
+        }
+        h1 span {
+            font-weight: 400;
+        }
+        h3 {
+            font-weight: 500;
+            margin: 50px 0 0;
+        }
+        strong {
+            font-weight: 400;
+        }
+        label {
+            font-size: smaller;
+        }
+        .carousel {
+            position: relative;
+            margin-top: 25px;
+        }
+        .carousel-track-container {
+            position: relative;
+            width: calc(100% - 100px);
+            margin: auto;
+            height: 260px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .carousel-track-container::-webkit-scrollbar {
+            height: 0 !important;
+            display: none;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+        }
+        .carousel-item {
+            position: relative;
+            transition: opacity 0.5s ease-in;
+            height: calc(100% - 2px);
+            display: flex;
+            justify-content: space-around;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(45deg, #ff000075, #ffff0075);
+            background: linear-gradient(45deg, #ccc, #fff);
+            padding: 0 20px;
+            box-sizing: border-box;
+            font-weight: 400;
+            border: solid 1px #aaa;
+        }
+        .carousel-item .title {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -2px;
+            color: white;
+            text-shadow: 0 0 6px black;
+        }        
+        .cta {
+            padding: 16px;
+            text-align: right;
+        }
+        .carousel a.cta-link {
+            border: solid 1px #333;
+            padding: 6px 16px 10px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #eee;
+            font-weight: 600;
+            background: #333;
+        }
+        .carousel-button {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: solid 1px #999;
+            border-radius: 50%;
+            color: #666;
+            font-size: 1.75rem;
+            cursor: pointer;
+        }
+        .carousel-button.prev {
+            left: 10px;
+            display: none;
+        }
+        .carousel-button.next {
+            right: 10px;
+        }
+
+        fieldset {
+            margin: 50px;
+            border-color: #ddd;
+            border: solid 1px gray;
+            border-radius: 10px;
+        }
+
+        fieldset legend {
+            padding: 0 10px;
+            font-weight: 600;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            font-size: smaller;
+        }
+
+        
+        /* Media Queries */
+        @media (max-width: 640px) {
+            .carousel-track-container {
+                width: 100%;
+            }
+            .carousel-item {
+                min-width: 100%;
+            }
+            .carousel-button.next,
+            .carousel-button.prev {
+                display: none;
+            }
+            .linkoverlay-option {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CaaS <span>Carousel</span> Prototype</h1>
+        <p>An accessible carousel prototype for CaaS based on <a href="#TAB"><strong>TAB</strong></a> key navigation.</p>
+        <div class="carousel" aria-label="Accessible Carousel">
+            <div class="carousel-navigation">
+                <button class="carousel-button prev" aria-label="Previous Page" title="Previous Page">&#10094;</button>
+                <button class="carousel-button next" aria-label="Next Page" title="Next Page">&#10095;</button>
+            </div>
+            <div class="carousel-track-container">
+                <div class="carousel-track">
+                    <div class="carousel-item">
+                        <div class="title">Card 1 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 2 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1" >CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 3 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 4 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 5 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 6 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 7 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 8 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 9 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 10 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 11 Title</div>
+                        <div class="content">This is where the card description goes.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="title">Card 12 Title</div>
+                        <div class="content">This is a card with two CTAs.</div>
+                        <div class="cta">
+                            <a href="#" class="cta-link" tabindex="-1">CTA1 Link</a>
+                            &nbsp;
+                            <a href="#" class="cta-link" tabindex="-1" >CTA2 Link</a>
+                        </div>
+                        <a href="#" class="linkBlocker" tabindex="-1"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="linkoverlay-option">
+            <input type="checkbox" name="linkoverlay">
+            <label for="linkoverlay">Use Link Overlays</label>
+        </p>
+
+        <fieldset>
+            <legend>Carousel Keyboard Navigation</legend>
+            <p>Press the <a href="javascript:alert('Sorry, I do not do anything. I am just a dummy link.')"> <strong>TAB</strong></a> 
+                key to until the <i>Next Page</i> navigation button <b>(&#10095;)</b> is selected. <br>Then:</p>
+            <ul>
+                <li>
+                    Press the <a href="javascript:alert('Sorry, I do not do anything. I am just a dummy link.')"><strong>RETURN</strong></a> 
+                    key to navigate to the desired page in the carousel.
+                </li>
+                <li>
+                    Press the <a href="javascript:alert('Sorry, I do not do anything. I am just a dummy link.')"> <strong>TAB</strong></a> 
+                    key to navigate into the first card of the current page on the carousel.
+                </li>
+        </fieldset>
+    </div>
+    
+    <footer>
+        Send feedback to <a href="mailto:cmiqueo@adobe.com">cmiqueo@adobe.com</a> 
+    </footer>
+
+    <script>
+    
+    /** *******************************************************************************
+     *                         Carousel Prototype Disclaimer                          *
+     *            This is a prototype and not intended for production use.            *
+     * ****************************************************************************** */
+
+    !(function() {
+        const cardsPerPage = 3;
+        const columnGap = 40;
+        const isMobile = window.innerWidth < 640;
+        const track = document.querySelector('.carousel-track');
+        const carouselWidth = document.querySelector('.carousel-track-container').getBoundingClientRect().width;
+        const cardWidth = carouselWidth / cardsPerPage - columnGap / 2 - 8;
+        const prevButton = document.querySelector('.carousel-button.prev');
+        const nextButton = document.querySelector('.carousel-button.next');
+        const linkOverlay = document.querySelector('.linkoverlay-option input');
+        const cards = Array.from(track.children);
+        
+        let currentPage = 1;
+        let firstCard = 0;
+
+        track.style.columnGap = `${columnGap}px`;
+
+        // Sets card width, position, and tabindex
+        const setCarousel = () => {
+            const useLinkOverlay = document.body.classList.contains('link-overlay');
+            cards.forEach((card, index) => {
+                disableArrowNavigation(card);
+                const cardIndex = index + 1;
+                if (!isMobile) card.style.minWidth =`${cardWidth}px`;
+                card.setAttribute('data-card-left', (cardWidth + columnGap) * index);
+                card.querySelector('a').setAttribute('tabindex', '-1');
+                if (cardIndex <= cardsPerPage) {
+                    if (useLinkOverlay) {
+                        card.querySelector('.linkBlocker').setAttribute('tabindex', '0');
+                    } else {
+                        card.querySelectorAll('a').forEach(a => {
+                            a.setAttribute('tabindex', '0');
+                            a.setAttribute('aria-hidden', 'false');
+                        }); 
+                    }
+                }
+            });
+        };
+
+        // Check if Card is in current Page
+        const isCardVisible = (cardIndex) => {
+            return cardIndex >= (currentPage - 1) * cardsPerPage && cardIndex < currentPage * cardsPerPage;
+        };
+
+        // Set card tabindex
+        const setCardTabindex = () => {
+            const useLinkOverlay = document.body.classList.contains('link-overlay');
+            cards.forEach((card, index) => {
+                card.querySelectorAll('a').forEach(a => {
+                    a.setAttribute('tabindex', '-1');
+                    a.setAttribute('aria-hidden', 'true');
+                });
+
+                card.querySelector('.linkBlocker').setAttribute('tabindex', '-1');
+                if (isCardVisible(index)) {
+                    if (useLinkOverlay) {
+                        card.querySelector('.linkBlocker').setAttribute('tabindex', '0');
+                    } else {
+                        card.querySelectorAll('a').forEach(a => {
+                            a.setAttribute('tabindex', '0');
+                            a.setAttribute('aria-hidden', 'false');
+                        }); 
+                    }
+                 }
+            });
+        };
+
+        // Scroll to Page and set tabindex for cards
+        const scrollToPage = (page) => {
+            const firstCard = cards[(page - 1) * cardsPerPage];
+            const trackPosition = firstCard.dataset.cardLeft;
+            track.style.transform = `translateX(-${trackPosition}px)`;
+            currentPage = page; 
+            setCardTabindex();
+            // Handle first/last page navigation focus
+            if (currentPage === 1) {
+                nextButton.focus();
+            } else if (currentPage >= cards.length / cardsPerPage) {
+                prevButton.focus();
+            }
+        };
+
+        // Hide/Show navigation buttons based on the current page
+        const hideShowArrows = (cards, prevButton, nextButton) => {
+            if (currentPage === 1) {
+                prevButton.style.display = 'none';
+                nextButton.style.display = 'block';
+            } else if (currentPage >= cards.length / cardsPerPage) {
+                prevButton.style.display = 'block';
+                nextButton.style.display = 'none';
+            } else {
+                prevButton.style.display = 'block';
+                nextButton.style.display = 'block';
+            }
+        };
+
+        // Next Page Click
+        nextButton.addEventListener('click', () => {        
+            scrollToPage(currentPage + 1);
+            hideShowArrows(cards, prevButton, nextButton);
+        });
+
+        // Previous Page Click
+        prevButton.addEventListener('click', () => {
+            scrollToPage(currentPage - 1);
+            hideShowArrows(cards, prevButton, nextButton);
+        });
+
+        // Link Overlay Option
+        linkOverlay.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                document.body.classList.add('link-overlay');
+            } else {
+                document.body.classList.remove('link-overlay');
+            }
+            setCarousel();
+        });
+
+        // Disable keyboard arrow navigation
+        function disableArrowNavigation(card) {
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // Set cards and keyboard navigation
+        setCarousel();
+
+        // Set Links Game
+        setLinksGame();
+        function setLinksGame() {
+            const links = document.querySelectorAll('a');
+            links.forEach(link => {
+                link.setAttribute('href', 'javascript:alert("OOOPS! \nLooks like you have used an incorrect link. \nTRY again!")');
+            });
+            links[links.length - 3].setAttribute('href', 'javascript:alert("CONGRATULATIONS! \nYou have FOUND the correct RETURN link.")');    
+        }
+    })();
+    </script>
+</body>
+</html>
