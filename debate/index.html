@@ -174,9 +174,15 @@
 
 
             const stopButton = document.getElementById('stop');
-            stopButton.addEventListener('click', stopTimer);
-            function stopTimer() {
+            stopButton.addEventListener('click', stopTimers);
+            function stopTimers() {
+                console.log("Stop Timer");
                 clearInterval(activeInterval);
+                clearInterval(mainInterval);
+                activeInterval = null;
+                activeSpeaker?.classList.remove('active');
+                activeSpeaker = null;
+                // totalSeconds = 0;
             }
 
 
