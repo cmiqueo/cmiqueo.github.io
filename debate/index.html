@@ -1,1 +1,196 @@
-dsu/debate.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debate Timer</title>
+    <style>
+        body {
+            background: #000;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            background: #101010;
+            height: 100vh;
+        }
+        #mainTimer {
+            height: 32px;
+            
+        }
+        .main-timer {
+            font-size: 20px;
+            color: #666;
+            text-align: right;
+            padding: 5px;
+        }
+        #speakers {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: calc(100vh - 120px);
+        }
+        .speaker {
+            width: 100%;
+            height: 50%;
+            background-color: #444;
+            color: white;
+            /* margin: 2px; */
+            padding: 4px 10px 0;
+            /* border-radius: 10px; */
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            cursor: pointer;
+            box-sizing: border-box;
+            flex-direction: column;
+            border-bottom: solid 2px #666;
+            position: relative;
+        }
+        .speaker svg {
+            position: absolute;
+            opacity: 0.025;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 75%;
+            max-height: 75%;
+            z-index: 0;
+        }
+        .active {
+            background-color: #008800;
+        }
+        .timer {
+            font-size: 60px;
+            /* font-weight: 800; */
+            /* position: relative;
+            z-index: 1; */
+        }
+        .active .timer {
+            font-weight: 800;
+        }
+        .label {
+            position: relative;
+            z-index: 1;
+            font-size: 72px;
+            color: #999;
+            opacity: 0.25;
+            /* transform: rotate(90deg); */
+        }
+        .controls {
+            height: 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .controls button {
+            width: 50%;
+            height: 100%;
+            background-color: #444;
+            color: white;
+            border: solid 1px #666;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="mainTimer">
+            <div class="main-timer">0:00</div>
+        </div>
+        <div id="speakers">
+            <div class="speaker" id="speaker1">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="400" viewBox="0, 0, 400,400"><g id="svgg"><path id="path0" d="M181.326 1.259 C 99.404 14.988,65.693 117.723,123.260 178.215 C 189.026 247.324,305.462 200.836,305.462 105.469 C 305.462 39.345,246.986 -9.744,181.326 1.259 M208.984 24.559 C 262.598 28.631,297.197 90.123,273.785 139.728 C 246.882 196.729,169.897 203.416,133.166 151.942 C 107.540 116.031,117.147 63.165,153.810 38.337 C 167.463 29.092,189.088 22.568,201.563 23.931 C 202.637 24.048,205.977 24.331,208.984 24.559 M154.297 235.591 C 87.099 246.233,34.781 299.326,25.431 366.364 C 22.732 385.713,23.864 394.862,29.407 398.517 C 32.908 400.825,367.092 400.825,370.593 398.517 C 376.120 394.873,377.311 385.285,374.569 366.507 C 364.990 300.917,317.603 250.729,251.893 236.578 C 241.739 234.391,166.666 233.632,154.297 235.591 M230.871 258.570 C 293.648 262.904,341.827 308.856,351.103 373.242 L 351.581 376.563 200.000 376.563 L 48.419 376.563 48.897 373.242 C 57.188 315.688,96.665 272.382,151.361 260.842 C 164.482 258.074,206.354 256.877,230.871 258.570 " stroke="none" fill="#ffffff" fill-rule="evenodd"></path></g></svg>
+                <div class="label">. .</div>
+                <div class="timer">0:00</div>
+            </div>
+            <div class="speaker" id="speaker2">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="400" viewBox="0, 0, 400,400"><g id="svgg"><path id="path0" d="M181.326 1.259 C 99.404 14.988,65.693 117.723,123.260 178.215 C 189.026 247.324,305.462 200.836,305.462 105.469 C 305.462 39.345,246.986 -9.744,181.326 1.259 M208.984 24.559 C 262.598 28.631,297.197 90.123,273.785 139.728 C 246.882 196.729,169.897 203.416,133.166 151.942 C 107.540 116.031,117.147 63.165,153.810 38.337 C 167.463 29.092,189.088 22.568,201.563 23.931 C 202.637 24.048,205.977 24.331,208.984 24.559 M154.297 235.591 C 87.099 246.233,34.781 299.326,25.431 366.364 C 22.732 385.713,23.864 394.862,29.407 398.517 C 32.908 400.825,367.092 400.825,370.593 398.517 C 376.120 394.873,377.311 385.285,374.569 366.507 C 364.990 300.917,317.603 250.729,251.893 236.578 C 241.739 234.391,166.666 233.632,154.297 235.591 M230.871 258.570 C 293.648 262.904,341.827 308.856,351.103 373.242 L 351.581 376.563 200.000 376.563 L 48.419 376.563 48.897 373.242 C 57.188 315.688,96.665 272.382,151.361 260.842 C 164.482 258.074,206.354 256.877,230.871 258.570 " stroke="none" fill="#ffffff" fill-rule="evenodd"></path></g></svg>
+                <div class="label">. .</div>
+                <div class="timer">0:00</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="stop">Stop</button>
+            <button id="reset">Reset</button>
+        </div>
+
+        <script>
+            // speaker1 = document.getElementById('speaker1');
+            // speaker2 = document.getElementById('speaker2');
+            const speakers = document.querySelectorAll('.speaker');
+            const mainTimer = document.getElementById('mainTimer');
+            let totalSeconds = 0;
+            let mainInterval = null;
+            let activeTimer = null;
+            let activeInterval = null;
+            let activeSpeaker = null;
+
+            speakers.forEach(element => {
+                element.addEventListener('click', function() {
+                    const timer = this.querySelector('.timer');
+                    // console.log("Timer clicked", this.id);
+                    trackTime(this);
+                });
+            });
+
+            function trackTime(speaker) {
+                // If clicking the same active speaker, pause the timer
+                if (speaker === activeSpeaker) {
+                    return;
+                }
+                
+                // If another speaker was active, pause their timer
+                if (activeSpeaker) {
+                    clearInterval(activeInterval);
+                    activeSpeaker.classList.remove('active');
+                }
+                
+                // Set the clicked speaker as active
+                activeSpeaker = speaker;
+                speaker.classList.add('active');
+                
+                const timer = speaker.querySelector('.timer');
+                const timeArray = timer.textContent.split(':');
+                const minutes = parseInt(timeArray[0], 10);
+                const seconds = parseInt(timeArray[1], 10);
+                
+                let totalSeconds = minutes * 60 + seconds;
+                
+                // Start the timer for this speaker
+                activeInterval = setInterval(() => {
+                    totalSeconds++;
+                    const newMinutes = Math.floor(totalSeconds / 60);
+                    const newSeconds = totalSeconds % 60;
+                    timer.textContent = `${newMinutes}:${newSeconds < 10 ? '0' : ''}${newSeconds}`;
+                }, 1000);
+            }
+
+
+            const stopButton = document.getElementById('stop');
+            stopButton.addEventListener('click', stopTimer);
+            function stopTimer() {
+                clearInterval(activeInterval);
+            }
+
+            function startMainTimer() {
+                const mainTimer = document.querySelector('.main-timer');
+                mainTimer.textContent = '0:00';
+                mainInterval = setInterval(() => {
+                    totalSeconds++;
+                    const newMinutes = Math.floor(totalSeconds / 60);
+                    const newSeconds = totalSeconds % 60;
+                    mainTimer.textContent = `${newMinutes}:${newSeconds < 10 ? '0' : ''}${newSeconds}`;
+                }, 1000);
+            }
+
+            startMainTimer();
+
+        </script>
+</body>
+</html>
