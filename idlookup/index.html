@@ -96,20 +96,24 @@
     </div>
 
     </p>
-    <script>
+    <script type="module">
         // UI elements
         const input = document.getElementById('input');
         const button = document.getElementById('button');
         const output = document.getElementById('output');
 
         button.addEventListener('click', async () => {
-            const id = await getUuid(input.value.split('https://').pop());
             if (!input.value) {
                 output.classList.add('hidden');
                 return;
             }
+
+            const aemId = await getAEMEntityId(input.value);
+
+            const uuid = aemId || await getUuid(input.value.split('https://').pop());
+
             output.classList.remove('hidden');
-            output.textContent = id;
+            output.textContent = uuid;
         });
 
         input.addEventListener('keyup', async (e) => {
@@ -118,19 +122,31 @@
             }
         });
 
+        async function getAEMEntityId(url) {
+            console.log('getAEMEntityId()', url);
+            const source = await fetch(url);
+            const text = await source.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const metaTag = doc.querySelector('meta[name="entity_id"]');
+            const aemEntityId = metaTag ? metaTag.getAttribute('content') : false;
+            console.log('getAEMEntityId():aemEntityId', aemEntityId);
+            return aemEntityId;
+        }
+
         // JS functions from getUuid.js
         const HEX_DIGITS = '0123456789abcdef'.split('');
 
         const sha1 = async (message) => {
-        const data = new TextEncoder().encode(message);
-        const hashBuf = await crypto.subtle.digest('SHA-1', data);
-        return hashBuf;
+            const data = new TextEncoder().encode(message);
+            const hashBuf = await crypto.subtle.digest('SHA-1', data);
+            return hashBuf;
         }
 
         const uint8ToHex = (int) => {
-        const first = int >> 4;
-        const second = int - (first << 4);
-        return HEX_DIGITS[first] + HEX_DIGITS[second];
+            const first = int >> 4;
+            const second = int - (first << 4);
+            return HEX_DIGITS[first] + HEX_DIGITS[second];
         };
 
         const uint8ArrayToHex = (buf) => [...buf]
