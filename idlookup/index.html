@@ -4,28 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entity ID Lookup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Special+Elite&display=swap" rel="stylesheet">
+
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Open Sans", Arial, sans-serif;
             background-color: #f0f0f0;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
+            font-weight: 300;
         }
 
+        .header {
+            background: linear-gradient(0deg, black, #505050, black);
+            color: white;
+            padding: 40px 0 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
         .form {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
         }
         
         input#input {
-            width: 500px;
+            width: 640px;
             display: block;
             margin: 0 auto;
-            margin-bottom: 10px;
+            margin-bottom: 25px;
             height: 24px;
-            font-size: 16px;
-            font-family: monospace;
+            font-size: 15px;
         }
         button#button {
             padding: 6px 50px;
@@ -34,6 +47,11 @@
         }
         p#output {
             font-size: 20px;
+            border: solid 1px #aaa;
+            padding: 20px;
+            border-radius: 10px;
+            background: #fafafa;
+            margin: 20px auto;
         }
         .disclaimer {
             margin: 20px auto;
@@ -43,39 +61,54 @@
             border-radius: 10px;
             padding: 0 10px 10px 10px;
             font-size: 13px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #eee;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1>Entity ID Lookup</h1>
+        <p>Another Entity ID lookup for Milo pages</p>
+    </div>
+
     <div class="form">
-        <h1>Milo Entity ID Lookup</h1>
+        <p><b>Note: This tools only works with production URLs generated with Milo.</b></p>
+        <p>Enter a production URL to find the entity ID.</p>
         <input type="text" id="input" placeholder="Enter production URL">
         <button id="button">Go</button>
-        <p id="output"></p>
+        <p id="output" class="hidden"></p>
     </div>
 
 
     <div class="disclaimer">
         <p><b>Diclaimer</b></p>
-        <p>This tool is good but not perfect. It is a simple tool to help you find the entity ID of a given URL.</p>
-        <p>Some of the results may be incorrect. If you need to find the entity ID of a given URL, <br>
+        <p>This tool is good but not perfect. It is a simple tool to help you find the entity ID of a given URL.
+        <br>Some of the results may be incorrect. If you need to find the entity ID of a given URL, <br>
             please use the 
             <a href="https://rundeck.wcmsops.adobe.com/project/Chimera/job/show/65d2e474-6eb6-4732-988c-6eb59e22b66f">Milo Entity ID Lookup Tool</a>.</p>
     </div>
 
-
-
     </p>
-    <script type="module">
-
+    <script>
         // UI elements
         const input = document.getElementById('input');
         const button = document.getElementById('button');
         const output = document.getElementById('output');
 
         button.addEventListener('click', async () => {
-            console.log('button clicked');
             const id = await getUuid(input.value.split('https://').pop());
+            if (!input.value) {
+                output.classList.add('hidden');
+                return;
+            }
+            output.classList.remove('hidden');
             output.textContent = id;
         });
 
@@ -84,7 +117,6 @@
                 button.click();
             }
         });
-
 
         // JS functions from getUuid.js
         const HEX_DIGITS = '0123456789abcdef'.split('');
