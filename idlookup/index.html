@@ -16,13 +16,26 @@
             margin: 0;
             font-weight: 300;
         }
-
         .header {
             background: linear-gradient(0deg, black, #505050, black);
             color: white;
             padding: 40px 0 20px;
             text-align: center;
             margin-bottom: 40px;
+            text-shadow: 0 0 6px #000;
+        }
+        h1 span {
+            font-size: 48px;
+            transform: rotate(45deg);
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: -7px;
+            font-weight: 300;
+            color: #ddd;
+        }
+        h1 i {
+            font-style: normal;
+            font-weight: 300;
         }
         .form {
             display: flex;
@@ -30,22 +43,22 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-        }
-        
-        input#input {
+        }       
+        #input {
             width: 640px;
+            max-width: 85%;
             display: block;
             margin: 0 auto;
             margin-bottom: 25px;
-            height: 24px;
+            height: 28px;
             font-size: 15px;
         }
-        button#button {
+        #button {
             padding: 6px 50px;
             font-size: 16px;
             cursor: pointer;
         }
-        p#output {
+        #output {
             font-size: 20px;
             border: solid 1px #aaa;
             padding: 20px;
@@ -56,6 +69,7 @@
         .disclaimer {
             margin: 20px auto;
             width: 720px;
+            max-width: 80%;
             text-align: center;
             border: 1px solid #ccc;
             border-radius: 10px;
@@ -70,29 +84,68 @@
         .hidden {
             display: none;
         }
+        .error {
+            color: darkred;
+        }
+        p.aem-page {
+            margin-top: 0;
+        }
+        @media screen and (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+            .header {
+                padding: 20px 0 10px;
+                margin-bottom: 10px;
+                font-size: 13px;
+            }
+            .header p {
+                margin: 0 0 15px;
+            }
+            h1 {
+                margin: 0;
+            }
+            h1 span {
+                font-size: 36px;
+            }
+            .form {
+                max-width: 85%;
+                margin: 0  auto;
+            }
+            button#button {
+                padding: 6px 30px;
+                font-size: 13px;
+            }
+            #output {
+                font-size: 14px;
+                max-width: 85%;
+                padding: 10px;
+            }
+            
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Entity ID Lookup</h1>
-        <p>Another Entity ID lookup for Milo pages</p>
+        <h1><span>&#9906;</span>Entity<i>ID</i> Look<i>App</i></h1>
+        <p>Another Entity ID Look-App for Milo and AEM pages</p>
     </div>
 
     <div class="form">
-        <p><b>Note: This tools only works with production URLs generated with Milo.</b></p>
+        <p>This tool works with production URLs generated with Milo and AEM.</p>
         <p>Enter a production URL to find the entity ID.</p>
         <input type="text" id="input" placeholder="Enter production URL">
         <button id="button">Go</button>
         <p id="output" class="hidden"></p>
+        <p id="aemPage" class="hidden"><b>Note:</b> This is an AEM page</p>
     </div>
-
 
     <div class="disclaimer">
         <p><b>Disclaimer</b></p>
         <p>This tool is good but not perfect. It is a simple tool to help you find the entity ID of a given URL.
         <br>Some of the results may be incorrect. If you need to find the entity ID of a given URL, <br>
             please use the 
-            <a href="https://rundeck.wcmsops.adobe.com/project/Chimera/job/show/65d2e474-6eb6-4732-988c-6eb59e22b66f">Milo Entity ID Lookup Tool</a>.</p>
+            <a href="https://rundeck.wcmsops.adobe.com/project/Chimera/job/show/65d2e474-6eb6-4732-988c-6eb59e22b66f">CaaS Entity ID Lookup Tool</a>.</p>
     </div>
 
     </p>
@@ -103,17 +156,41 @@
         const output = document.getElementById('output');
 
         button.addEventListener('click', async () => {
-            if (!input.value) {
-                output.classList.add('hidden');
+            const url = input.value;
+            
+            // Reset UI
+            output.textContent = '';
+            output.classList.add('hidden');
+            output.classList.remove('error');
+            aemPage.classList.add('hidden');
+            let isAEM = false;
+
+            // Validate URL
+            if (!url) {
+                output.classList.add('hidden', 'error');
+                return;
+            } else if (!url.includes('adobe.com/')) {
+                output.classList.remove('hidden');
+                output.classList.add('error');
+                output.innerHTML = "<b>Oops!</b> This tool only supports *<b>.adobe.com</b> pages.";
                 return;
             }
 
-            const aemId = await getAEMEntityId(input.value);
+            let uuid = await getAEMEntityId(url);
+            if (uuid) {
+                console.log('getAEMEntityId() returned UUID:', uuid);
+                isAEM = true;
+            } else {
+                console.log('getAEMEntityId() returned false, using getUuid()');
+                uuid = await getUuid(url.split('https://').pop()) || false;
+            } 
 
-            const uuid = aemId || await getUuid(input.value.split('https://').pop());
-
-            output.classList.remove('hidden');
-            output.textContent = uuid;
+            output.classList.remove('hidden', 'error');
+            output.innerHTML = uuid || "<b>Oops!</b> I can't find any Entity ID";
+            
+            if(isAEM) {
+                aemPage.classList.remove('hidden');
+            } 
         });
 
         input.addEventListener('keyup', async (e) => {
@@ -124,12 +201,18 @@
 
         async function getAEMEntityId(url) {
             console.log('getAEMEntityId()', url);
-            const source = await fetch(url);
-            const text = await source.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(text, 'text/html');
-            const metaTag = doc.querySelector('meta[name="entity_id"]');
-            const aemEntityId = metaTag ? metaTag.getAttribute('content') : false;
+            let aemEntityId;
+            try {
+                const source = await fetch(url)
+                const text = await source.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const entityMetaTag = doc.querySelector('meta[name="entity_id"]');
+                aemEntityId = entityMetaTag ? entityMetaTag.getAttribute('content') : false;
+            } catch (error) {
+                console.log('getAEMEntityId():error', error);
+                return false;
+            }
             console.log('getAEMEntityId():aemEntityId', aemEntityId);
             return aemEntityId;
         }
@@ -177,6 +260,8 @@
 
         // focus on input when page loads
         input.focus();
+
+        console.log('App loaded!');
 
     </script>
 </body>
