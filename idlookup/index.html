@@ -11,10 +11,12 @@
     <style>
         body {
             font-family: "Open Sans", Arial, sans-serif;
-            background-color: #f0f0f0;
             padding: 0;
             margin: 0;
             font-weight: 300;
+            height: 100%;
+            min-height: 100vh;
+            background: linear-gradient(10deg, #bababa, transparent);
         }
         .header {
             background: linear-gradient(0deg, black, #505050, black);
@@ -29,21 +31,43 @@
             transform: rotate(45deg);
             display: inline-block;
             margin-right: 10px;
-            vertical-align: -7px;
+            vertical-align: -5px;
             font-weight: 300;
             color: #ddd;
+            border: solid 1px #999;
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            line-height: 1;
+            background: radial-gradient(transparent, #202020);
         }
         h1 i {
             font-style: normal;
             font-weight: 300;
         }
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 720px;
+            margin: 0 auto;
+            text-align: center;
+        }
         .form {
+            border: solid 1px #aaa;
+            padding: 20px;
+            border-radius: 20px;
+            background: #efefef;
+        }
+        .form,
+        .results {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-        }       
+        }
+       
+
         #input {
             width: 640px;
             max-width: 85%;
@@ -64,22 +88,29 @@
             padding: 20px;
             border-radius: 10px;
             background: #fafafa;
-            margin: 20px auto;
+            margin: 0 auto 25px;
+            display: inline-block;
         }
-        .disclaimer {
+        #resultsHeader {
+            margin: 35px 0 10px;
+        }
+        #disclaimer {
             margin: 20px auto;
-            width: 720px;
+            width: 800px;
             max-width: 80%;
             text-align: center;
-            border: 1px solid #ccc;
+            border: 1px solid #999;
             border-radius: 10px;
             padding: 0 10px 10px 10px;
             font-size: 13px;
+            background-color: #dadada66;
+            margin-top:100px;
+        }
+        .absolute {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #eee;
         }
         .hidden {
             display: none;
@@ -90,6 +121,38 @@
         p.aem-page {
             margin-top: 0;
         }
+        #showMetadata {
+            background: transparent;
+            border: none;
+            font-size: 16px;
+            font-weight: 300;
+            cursor: pointer;
+        }
+        #showMetadata span {
+            transform: rotate(180deg);
+            display: inline-block;
+            color: #666;
+        }
+
+        #metadata table {
+            width: 720px;
+            text-align: left;
+            border-collapse: collapse;
+            font-size: 14px;
+            max-width: 85%;
+            background: #eee;
+            margin: 0 auto;
+        }
+        #metadata table td {
+            padding: 5px;
+            border: 1px solid #ccc;
+            vertical-align: top;
+        }
+        #metadata table img {
+            width: 350px;
+            max-width: 100%;
+        }
+        
         @media screen and (max-width: 768px) {
             body {
                 font-size: 14px;
@@ -107,6 +170,9 @@
             }
             h1 span {
                 font-size: 36px;
+                height: 38px;
+                width: 38px;
+                vertical-align: -2px;
             }
             .form {
                 max-width: 85%;
@@ -121,31 +187,41 @@
                 max-width: 85%;
                 padding: 10px;
             }
-            
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1><span>&#9906;</span>Entity<i>ID</i> Look<i>App</i></h1>
-        <p>Another Entity ID Look-App for Milo and AEM pages</p>
+        <p>Another CaaS Entity ID Look-App for Milo and AEM pages</p>
     </div>
-
-    <div class="form">
+    <div class="container">
         <p>This tool works with production URLs generated with Milo and AEM.</p>
-        <p>Enter a production URL to find the entity ID.</p>
-        <input type="text" id="input" placeholder="Enter production URL">
-        <button id="button">Go</button>
-        <p id="output" class="hidden"></p>
-        <p id="aemPage" class="hidden"><b>Note:</b> This is an AEM page</p>
-    </div>
+        <div class="form">
+            <p>Enter a production URL to find the entity ID.</p>
+            <input type="text" id="input" placeholder="Enter production URL">
+            <button id="button">Go</button>
+        </div>
 
-    <div class="disclaimer">
-        <p><b>Disclaimer</b></p>
-        <p>This tool is good but not perfect. It is a simple tool to help you find the entity ID of a given URL.
-        <br>Some of the results may be incorrect. If you need to find the entity ID of a given URL, <br>
-            please use the 
-            <a href="https://rundeck.wcmsops.adobe.com/project/Chimera/job/show/65d2e474-6eb6-4732-988c-6eb59e22b66f">CaaS Entity ID Lookup Tool</a>.</p>
+        <div id="results" class="hidden">
+            <p id="resultsHeader" class="hidden">
+                <b>Entity ID</b>
+                <span id="aemPage" class="hidden">(AEM)</span>
+            </p>
+            <p id="resultsError" class="hidden">
+                <b>Error!</b>
+            </p>
+            <span id="output"></span>
+            <div id="metadata">
+                <button id="showMetadata" class="hidden"><b>Show Card Metadata</b> <span>&#8682;</span></button>
+            </div>
+        </div>
+
+        <div id="disclaimer" class="absolute">
+            <p><b>Disclaimer</b>
+            <br>This tool is good but not perfect. It is a simple tool to help you find the entity ID of a given URL.
+            Some of the results may be incorrect. </p>
+        </div>
     </div>
 
     </p>
@@ -160,9 +236,10 @@
             
             // Reset UI
             output.textContent = '';
+            results.classList.add('hidden');
+            resultsError.classList.add('hidden');
             output.classList.add('hidden');
             output.classList.remove('error');
-            aemPage.classList.add('hidden');
             let isAEM = false;
 
             // Validate URL
@@ -170,9 +247,11 @@
                 output.classList.add('hidden', 'error');
                 return;
             } else if (!url.includes('adobe.com/')) {
+                results.classList.remove('hidden');
                 output.classList.remove('hidden');
                 output.classList.add('error');
-                output.innerHTML = "<b>Oops!</b> This tool only supports *<b>.adobe.com</b> pages.";
+                resultsError.classList.remove('hidden');
+                output.innerHTML = "<b>Oops!</b>' This tool only supports <b>.adobe.com</b> pages.";
                 return;
             }
 
@@ -185,20 +264,63 @@
                 uuid = await getUuid(url.split('https://').pop()) || false;
             } 
 
+            results.classList.remove('hidden');
+            resultsHeader.classList.remove('hidden');
             output.classList.remove('hidden', 'error');
             output.innerHTML = uuid || "<b>Oops!</b> I can't find any Entity ID";
             
             if(isAEM) {
                 aemPage.classList.remove('hidden');
-            } 
+            }
+
+            if(uuid) {
+                aemPage.classList.remove('hidden');
+                showMetadata.classList.remove('hidden');
+            }
         });
 
-        input.addEventListener('keyup', async (e) => {
+        input.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') {
                 button.click();
             }
         });
 
+        showMetadata.addEventListener('click', () => {
+            const id = output.textContent;
+            getMetadata(id);
+        });
+
+        async function getMetadata(id) {
+            console.log('getMetadata()', id);
+            // const url = './collection.json'; // For debugging
+            const url = `https://14257-chimera.adobeioruntime.net/api/v1/web/chimera-0.0.1/collection?debug=1&featuredCards=${id}`;
+            const json = await fetch(url);
+            const data = await json.json();
+            const card = data.cards[0];
+            const title = card.contentArea.title;
+            const description = card.contentArea.description;
+            const cardUrl = card.contentArea.url;
+            const cardId = card.id;
+            const imageUrl = card.styles.backgroundImage;
+            const tags = card.tags.map(tag => tag.id).join('<br>');
+
+            console.log('getMetadata():card', card);
+
+            metadata.innerHTML = `<hr><p><b>Chimera Card Metadata</b></p>
+            <table>
+                <tr><td width="120"><b>Title</b></td><td>${title}</td></tr>
+                <tr><td width="120"><b>Entity ID</b></td><td>${cardId}</td></tr>
+                <tr><td width="120"><b>Description</b></td><td>${description}</td></tr>
+                <tr><td width="120"><b>Image URL</b></td><td><img src="${imageUrl}" alt="Image URL"></td></tr>
+                <tr><td width="120"><b>CTA URL</b></td><td><a href="${cardUrl}">${cardUrl}</a></td></tr>
+                <tr><td width="120"><b>Tags</b></td><td>${tags}</td></tr>
+            </table>
+            `;
+
+            disclaimer.classList.remove('absolute');
+        }
+
+        // fetch a page and try to scrape the entity_id meta tag
         async function getAEMEntityId(url) {
             console.log('getAEMEntityId()', url);
             let aemEntityId;
