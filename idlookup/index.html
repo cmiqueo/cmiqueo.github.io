@@ -65,9 +65,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-        }
-       
-
+        }     
         .input-field {
             width: 640px;
             max-width: 85%;
@@ -251,9 +249,7 @@
         const metadataContent = document.querySelector('.metadata-container-content');
         const disclaimer = document.querySelector('.disclaimer');
 
-        button.addEventListener('click', async () => {
-            const url = input.value;
-            
+        button.addEventListener('click', async () => {           
             // Reset UI
             output.textContent = '';
             results.classList.add('hidden');
@@ -263,6 +259,9 @@
             showMetadata.classList.add('hidden');
             metadataContent.innerHTML = '';
             let isAEM = false;
+
+            // Get URL from input
+            const url = input.value;
 
             // Validate URL
             if (!url) {
@@ -277,15 +276,17 @@
                 return;
             }
 
+            // Get Entity ID from AEM or generate UUID
             let uuid = await getAEMEntityId(url);
             if (uuid) {
-                console.log('getAEMEntityId() returned UUID:', uuid);
+                // console.log('getAEMEntityId() returned UUID:', uuid);
                 isAEM = true;
             } else {
-                console.log('getAEMEntityId() returned false, using getUuid()');
+                // console.log('getAEMEntityId() returned false, using getUuid()');
                 uuid = await getUuid(url.split('https://').pop()) || false;
             } 
 
+            // Display results
             results.classList.remove('hidden');
             resultsHeader.classList.remove('hidden');
             output.classList.remove('hidden', 'error');
@@ -293,10 +294,11 @@
             
             if(isAEM) {
                 aemPage.classList.remove('hidden');
+            } else {
+                aemPage.classList.add('hidden');
             }
 
             if(uuid) {
-                aemPage.classList.remove('hidden');
                 showMetadata.classList.remove('hidden');
             }
         });
@@ -313,9 +315,9 @@
         });
 
         async function getMetadata(id) {
-            console.log('getMetadata()', id);
-            const url = './collection.json'; // For debugging
-            // const url = `https://14257-chimera.adobeioruntime.net/api/v1/web/chimera-0.0.1/collection?debug=1&featuredCards=${id}`;
+            // console.log('getMetadata()', id);
+            // const url = './collection.json'; // For debugging
+            const url = `https://14257-chimera.adobeioruntime.net/api/v1/web/chimera-0.0.1/collection?debug=1&featuredCards=${id}`;
             const json = await fetch(url);
             const data = await json.json();
             const card = data.cards[0];
@@ -326,9 +328,7 @@
             const imageUrl = card.styles.backgroundImage;
             const tags = card.tags.map(tag => tag.id).join('<br>');
 
-            console.log('getMetadata():card', card);
             showMetadata.classList.add('hidden');
-
             metadataContent.innerHTML = `<hr><p><b>Chimera Card Metadata</b></p>
             <table>
                 <tr><td width="120"><b>Title</b></td><td>${title}</td></tr>
@@ -346,7 +346,6 @@
 
         // fetch a page and try to scrape the entity_id meta tag
         async function getAEMEntityId(url) {
-            console.log('getAEMEntityId()', url);
             let aemEntityId;
             try {
                 const source = await fetch(url)
@@ -356,10 +355,8 @@
                 const entityMetaTag = doc.querySelector('meta[name="entity_id"]');
                 aemEntityId = entityMetaTag ? entityMetaTag.getAttribute('content') : false;
             } catch (error) {
-                console.log('getAEMEntityId():error', error);
                 return false;
             }
-            console.log('getAEMEntityId():aemEntityId', aemEntityId);
             return aemEntityId;
         }
 
@@ -399,7 +396,6 @@
         ].join('');
 
         const getUuid = async (str) => {  
-            console.log('getUuid', str);
             const buf = await sha1(str);
             return hashToUuid(new Uint8Array(buf));
         }
@@ -407,8 +403,7 @@
         // focus on input when page loads
         input.focus();
 
-        console.log('App loaded!');
-
+        console.log('EntityID LookApp loaded!');
     </script>
 </body>
 </html>
