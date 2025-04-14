@@ -17,6 +17,7 @@
             height: 100%;
             min-height: 100vh;
             background: linear-gradient(10deg, #bababa, transparent);
+            background: linear-gradient(10deg, #f6f6f6, transparent)
         }
         .header {
             background: linear-gradient(0deg, black, #505050, black);
@@ -39,7 +40,6 @@
             width: 50px;
             border-radius: 50%;
             line-height: 1;
-            background: radial-gradient(transparent, #202020);
         }
         h1 i {
             font-style: normal;
@@ -57,6 +57,8 @@
             padding: 20px;
             border-radius: 20px;
             background: #efefef;
+            background: #f6f6f6;
+            box-shadow: 0 0 16px #ddd;
         }
         .form,
         .results {
@@ -89,6 +91,10 @@
             background: #fafafa;
             margin: 0 auto 25px;
             display: inline-block;
+            box-shadow: 0 0 16px #ddd;
+        }
+        .output-text.error  {
+            box-shadow: 0 0 16px #fdd;
         }
         .results-header {
             margin: 35px 0 10px;
@@ -103,6 +109,7 @@
             padding: 0 10px 10px 10px;
             font-size: 13px;
             background-color: #ccc;
+            background-color: #f3f3f3;
             margin-top:100px;
             z-index: 1;
         }
@@ -142,11 +149,12 @@
         .metadata-container table {
             width: 720px;
             text-align: left;
+            margin: 0 auto;
             border-collapse: collapse;
             font-size: 14px;
             max-width: 85%;
             background: #eee;
-            margin: 0 auto;
+            background: #fcfcfc;
         }
         .metadata-container table td {
             padding: 5px;
@@ -285,7 +293,7 @@
                 // isAEM = uuid !== 'Error 404: Page not found.';         
                 isAEM = !uuid.includes('Error');
             } else {
-                console.log('getAEMEntityId() returned false, using getUuid()');
+                // console.log('getAEMEntityId() returned false, using getUuid()');
                 uuid = await getUuid(url.split('https://').pop()) || false;
             } 
 
@@ -301,7 +309,9 @@
                 aemPage.classList.add('hidden');
             }
 
-            if(!uuid.includes('Error')) {
+            if(uuid.includes('Error')) {
+                output.classList.add('error');
+            } else {
                 showMetadata.classList.remove('hidden');
             }
         });
