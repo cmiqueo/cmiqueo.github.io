@@ -102,8 +102,9 @@
             border-radius: 10px;
             padding: 0 10px 10px 10px;
             font-size: 13px;
-            background-color: #dadada66;
+            background-color: #ccc;
             margin-top:100px;
+            z-index: 1;
         }
         .absolute {
             position: absolute;
@@ -128,6 +129,7 @@
             font-size: 16px;
             font-weight: 300;
             cursor: pointer;
+            font-family: "Open Sans", Arial, sans-serif;
         }
         .show-metadata-button:hover {
             background: #ddd;
@@ -224,7 +226,7 @@
             <span class="output-text"></span>
             <div class="metadata-container">
                 <button class="show-metadata-button hidden"><b>Show Card Metadata</b> <span>&#8682;</span></button>
-                <div class="metadata-container-content">...</div>
+                <div class="metadata-container-content">Loading...</div>
             </div>
         </div>
     </div>
@@ -279,10 +281,11 @@
             // Get Entity ID from AEM or generate UUID
             let uuid = await getAEMEntityId(url);
             if (uuid) {
-                // console.log('getAEMEntityId() returned UUID:', uuid);
-                isAEM = true;
+                console.log('getAEMEntityId() returned UUID:', uuid);
+                // isAEM = uuid !== 'Error 404: Page not found.';         
+                isAEM = !uuid.includes('Error');
             } else {
-                // console.log('getAEMEntityId() returned false, using getUuid()');
+                console.log('getAEMEntityId() returned false, using getUuid()');
                 uuid = await getUuid(url.split('https://').pop()) || false;
             } 
 
@@ -298,7 +301,7 @@
                 aemPage.classList.add('hidden');
             }
 
-            if(uuid) {
+            if(!uuid.includes('Error')) {
                 showMetadata.classList.remove('hidden');
             }
         });
@@ -348,10 +351,17 @@
         async function getAEMEntityId(url) {
             let aemEntityId;
             try {
-                const source = await fetch(url)
-                const text = await source.text();
+                const response = await fetch(url);
+                const text = await response.text();
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(text, 'text/html');
+                const errorPage = doc.title.toLowerCase().includes('not found');
+                if (errorPage) {
+                    return 'Error 404: Page not found.';
+                }
+                if (response.status !== 200) {
+                    return `Error ${response.status}: ${response.statusText}`;
+                }
                 const entityMetaTag = doc.querySelector('meta[name="entity_id"]');
                 aemEntityId = entityMetaTag ? entityMetaTag.getAttribute('content') : false;
             } catch (error) {
