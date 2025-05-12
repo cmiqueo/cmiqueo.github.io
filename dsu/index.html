@@ -200,227 +200,174 @@
     "./images/Sanjay.png",
     "./images/DJ.png"
     ];
-
     const userName = document.getElementById("userName");
     const imageGrid = document.getElementById("imageGrid");
     const selectButton = document.getElementById("selectButton");
     const timerDisplay = document.getElementById("timerDisplay");
+
     let timerRunning = false;
-
-    const userTimers  = [];
-
-    let availableImages = [...images]; // Create a copy to avoid modifying the original array
+    const userTimers = [];
+    let availableImages = [...images];
 
     function init() {
-        console.log("createImageContainers");
-        images.forEach((_, index) => {
-            const containerDiv = document.createElement("div");
-            containerDiv.classList.add("imageContainer", "empty");
-            imageGrid.appendChild(containerDiv);
+        images.forEach(() => {
+            const div = document.createElement("div");
+            div.classList.add("imageContainer", "empty");
+            imageGrid.appendChild(div);
         });
     }
 
     function startMainTimer() {
         timerDisplay.parentElement.classList.add("running");
-        let timeElapsed = 0;
-        const timer = setInterval(() => {
-            timeElapsed++;
-            const minutes = Math.floor(timeElapsed / 60);
-            const seconds = timeElapsed % 60;
-            timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }, 1000);
-
-        // Store the timer ID in the timer div for cleanup
-        timerDisplay.dataset.timerId = timer;
+        const startTimestamp = Date.now();
+        const updateMainTimer = () => {
+            const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, "0")}`;
+        };
+        updateMainTimer();
+        const mainTimerId = setInterval(updateMainTimer, 1000);
+        timerDisplay.dataset.timerId = mainTimerId;
         timerRunning = true;
     }
 
-    function displaySpeaker(imageUrl) {
-        console.log("displaySpeaker", imageUrl);
-        const user = imageUrl.split("/").pop().split(".")[0];
-        userName.textContent = user;
+    function displaySpeaker(imagePath) {
+        const name = imagePath.split("/").pop().split(".")[0];
+        userName.textContent = name;
+        if (!timerRunning) startMainTimer();
+        selectButton.textContent = "Next Speaker";
 
-        // Call the startMainTimer function when the meeting starts
-        if(!timerRunning) startMainTimer()
+        const container = document.querySelector("div.imageContainer.empty");
+        container.id = name;
+        container.classList.remove("empty");
+        container.classList.add("selected", "filled");
 
-        const nextButton = document.getElementById("selectButton");
-        nextButton.textContent = "Next Speaker";
+        const img = document.createElement("img");
+        img.src = imagePath;
+        img.alt = name;
+        img.classList.add("imageItem");
 
-        const nextImageContainer = document.querySelector('div.imageContainer.empty');
+        const timerDiv = document.createElement("div");
+        timerDiv.classList.add("timer");
+        timerDiv.textContent = "0:00";
 
-        nextImageContainer.id = user;
-        nextImageContainer.classList.remove("empty");
-        nextImageContainer.classList.add("selected", "filled");
-        
-        const imgElement = document.createElement("img");
-        imgElement.src = imageUrl;
-        imgElement.alt = user;
-        imgElement.classList.add("imageItem");
+        container.appendChild(img);
+        container.appendChild(timerDiv);
 
-        const timerElement = document.createElement("div");
-        timerElement.classList.add("timer");
-        timerElement.textContent = "0:00";
-        
-        // Add elements to container
-        nextImageContainer.appendChild(imgElement);
-        nextImageContainer.appendChild(timerElement);
-
-        // reload user if needed
-        nextImageContainer.addEventListener('click', () => {
-            console.log("image clicked", user);
+        // Resume timer on click
+        container.addEventListener("click", () => {
             removeSelected();
-            nextImageContainer.classList.add("selected");
-            // Restart the timer for the selected speaker
-            let timeElapsed = userTimers.find(t => t.user === user)?.time || 0;
-
-            const timer = setInterval(() => {
-                timeElapsed++;
-                const minutes = Math.floor(timeElapsed / 60);
-                const seconds = timeElapsed % 60;
-                timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            }, 1000);
-
-            // Store the new timer ID in the container div for cleanup
-            nextImageContainer.dataset.timerId = timer;
-
-            // Reset UI if needed
-            if(selectButton.textContent === "End Meeting"){
+            container.classList.add("selected");
+            const prevTime = userTimers.find(u => u.user === name)?.time || 0;
+            const resumeStart = Date.now() - prevTime * 1000;
+            const updateResume = () => {
+                const elapsed = Math.floor((Date.now() - resumeStart) / 1000);
+                const mins = Math.floor(elapsed / 60);
+                const secs = elapsed % 60;
+                timerDiv.textContent = `${mins}:${secs.toString().padStart(2, "0")}`;
+            };
+            updateResume();
+            const resumeId = setInterval(updateResume, 1000);
+            container.dataset.timerId = resumeId;
+            if (selectButton.textContent === "End Meeting") {
                 selectButton.classList.remove("reset");
                 selectButton.textContent = "Done!";
             }
-            console.log("userTimers", userTimers);
         });
 
-        // Remove image from available options after adding to grid
-        availableImages = availableImages.filter(img => img !== imageUrl);
+        // Remove used image from list
+        availableImages = availableImages.filter(p => p !== imagePath);
 
-        // Start the timer
-        let timeElapsed = 0;
-        const timer = setInterval(() => {
-            timeElapsed++;
-            const minutes = Math.floor(timeElapsed / 60);
-            const seconds = timeElapsed % 60;
-            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }, 1000);
+        // Start new speaker timer
+        const start = Date.now();
+        const updateTimer = () => {
+            const elapsed = Math.floor((Date.now() - start) / 1000);
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            timerDiv.textContent = `${mins}:${secs.toString().padStart(2, "0")}`;
+        };
 
-        // Store the timer ID in the container div for cleanup
-        nextImageContainer.dataset.timerId = timer;
+        updateTimer();
+        const timerId = setInterval(updateTimer, 1000);
+        container.dataset.timerId = timerId;
 
-    }
-
-    function removeSelected() {
-        console.log("unSelectAllSpeakers");
-        const selectedSpeaker = imageGrid.querySelector('div.selected');
-        if (selectedSpeaker) {
-            selectedSpeaker.classList.remove("selected");
-            clearInterval(parseInt(selectedSpeaker.dataset.timerId));
-
-            // save timer data
-            const user = selectedSpeaker.id;
-            const time = toSeconds(selectedSpeaker.querySelector('.timer').textContent);
-            const existingTimerIndex = userTimers.findIndex(t => t.user === user);
-            if (existingTimerIndex !== -1) {
-                userTimers[existingTimerIndex].time = time;
-                return;
-            }
-            userTimers.push({ user, time });
-        }
-    }
-
-    function toSeconds(timeString) {
-        const [minutes, seconds] = timeString.split(':').map(Number);
-        return (minutes * 60) + seconds;
-    }
-
-    function selectRandomImage() {
-        console.log("selectRandomImage");
-        removeSelected();
-
-        const randomIndex = Math.floor(Math.random() * availableImages.length);
-        const selectedImage = availableImages[randomIndex];
-
-        displaySpeaker(selectedImage);
-
-       if (availableImages.length === 0) {
+        if (availableImages.length === 0) {
             selectButton.classList.add("reset");
             selectButton.textContent = "Done!";
         }
     }
 
+    function removeSelected() {
+    const sel = imageGrid.querySelector("div.selected");
+    if (!sel) return;
+        sel.classList.remove("selected");
+        clearInterval(parseInt(sel.dataset.timerId));
+        const name = sel.id;
+        const time = toSeconds(sel.querySelector(".timer").textContent);
+        const idx = userTimers.findIndex(u => u.user === name);
+        if (idx !== -1) userTimers[idx].time = time;
+        else userTimers.push({ user: name, time });
+    }
+
+    function toSeconds(str) {
+        const [m, s] = str.split(":").map(Number);
+        return m * 60 + s;
+    }
+
+    function selectRandomImage() {
+        removeSelected();
+        const idx = Math.floor(Math.random() * availableImages.length);
+        displaySpeaker(availableImages[idx]);
+    }
+
     function endSpeakers() {
-        console.log("endSpeakers");
         userName.textContent = "Done!";
         selectButton.textContent = "End Meeting";
-        // selectButton.classList.add("reset");
         imageGrid.classList.add("done");
         removeSelected();
     }
 
     function endMeeting() {
-        console.log("endMeeting");
         userName.textContent = "Done!";
         selectButton.textContent = "Reset Meeting";
         selectButton.classList.add("reset");
         imageGrid.classList.add("finished");
         removeSelected();
-        // Stop the main meeting timer
-        timerDisplay.classList.remove("running");
-        mainTimer.classList.add("finished");
-        if (timerDisplay.dataset.timerId) {
-            clearInterval(parseInt(timerDisplay.dataset.timerId));
-            timerDisplay.dataset.timerId = null;
-            timerRunning = false;
-        }
+        timerDisplay.parentElement.classList.remove("running");
+        if (timerDisplay.dataset.timerId) clearInterval(parseInt(timerDisplay.dataset.timerId));
+        timerDisplay.dataset.timerId = null;
+        timerRunning = false;
     }
 
     function resetMeeting() {
-        console.log("resetMeeting");
         imageGrid.classList.remove("finished");
-        
-        // Reload available images
         availableImages = [...images];
-
-        // Clear all timers before resetting
         clearTimers();
-
-        const userContainers = imageGrid.querySelectorAll('.imageContainer');
-        userContainers.forEach(container => {
-            container.classList.remove("selected");
-            container.classList.add("empty");
-            container.innerHTML = "";
+        document.querySelectorAll(".imageContainer").forEach(div => {
+            div.classList.remove("selected", "filled");
+            div.classList.add("empty");
+            div.innerHTML = "";
         });
-
-        // Update UI
         selectButton.textContent = "Start Meeting";
         selectButton.classList.remove("reset");
     }
 
     function clearTimers() {
-        console.log("clearTimers");
-        mainTimer.classList.remove("running");
-        timerDisplay.innerHTML = "0:00";
-        const existingContainers = imageGrid.querySelectorAll('div');
-        existingContainers.forEach(container => {
-            if (container.dataset.timerId) {
-                clearInterval(parseInt(container.dataset.timerId));
-            }
+        timerDisplay.parentElement.classList.remove("running");
+        timerDisplay.textContent = "0:00";
+        document.querySelectorAll(".imageContainer").forEach(div => {
+            if (div.dataset.timerId) clearInterval(parseInt(div.dataset.timerId));
         });
     }
 
     selectButton.addEventListener("click", () => {
-        console.log("selectButton clicked",);
-        if (availableImages.length > 0) {
-            selectRandomImage();
-        } else if(selectButton.textContent === "Done!"){
-            endSpeakers();
-        } else if(selectButton.textContent === "End Meeting"){
-            endMeeting();
-        } else if(selectButton.textContent === "Reset Meeting"){
-            resetMeeting();
-        }
+        if (availableImages.length > 0) selectRandomImage();
+        else if (selectButton.textContent === "Done!") endSpeakers();
+        else if (selectButton.textContent === "End Meeting") endMeeting();
+        else if (selectButton.textContent === "Reset Meeting") resetMeeting();
     });
 
-    // start the app
     init();
 
 </script>
