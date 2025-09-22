@@ -256,7 +256,7 @@
 
     function displaySpeaker(imagePath) {
         const name = imagePath.split("/").pop().split(".")[0];
-        const displayName = (name === "Carlos") ? "Coming Soon!!!" : name;
+        const displayName = (name === "SomeUser") ? "Some Message Here" : name;
         userName.textContent = displayName;
         if (!timerRunning) startMainTimer();
         selectButton.textContent = "Next Speaker";
