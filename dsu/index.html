@@ -13,13 +13,14 @@
             background: #333;
             background: linear-gradient(180deg, #333, transparent, #333);
             color: white;
+            background: transparent;
         }
         img.jira {
-            margin-top: 25px;
+            margin-top: 10px;
             width: 92px;
             height: 92px;
             border-radius: 50%;
-            opacity: .6;
+            /* opacity: .6; */
             box-shadow: 0 0 25px black;
             transition: all 0.5s ease;
         }
@@ -30,6 +31,7 @@
         h1 {
             font-weight: 300;
             font-size: 28px;
+            margin: 0;
         }
         h1 span{
             font-weight: 400;
@@ -46,15 +48,17 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin: 50px auto;
+            /* margin: 50px auto; */
+            margin: 20px auto 80px;
             border: solid 1px #666;
             padding: 20px;
-            max-width: 1200px;
+            /* max-width: 1200px; */
+            background: #333333aa;
         }
 
         #imageGrid div.imageContainer {
-            width: 160px;
-            height: 220px;
+            width: 220px;
+            height: 280px;
             border: solid 1px #757575;
             background: linear-gradient(45deg, black, transparent);
         }
@@ -107,8 +111,8 @@
         }
 
         .imageItem {
-            width: 160px;
-            height: 180px;
+            width: 200px;
+            height: 260px;
             object-fit: cover; /* Maintain aspect ratio and fill the container */
             cursor: pointer;
         }
@@ -151,16 +155,17 @@
         }   
 
         #mainTimer {
-            color: #666;
-            margin-top: 50px;
+            color: #999;
+            margin-top: 20px;
             font-weight: 300;
         }
 
         #timerDisplay {
-            color: #404040;
+            color: #999;
             font-size: 120px;
             font-weight: 600;
             text-shadow: 1px 1px 0px #666;
+            margin-top: -10px;
         }
         .imageContainer.empty {
             font-size: 200px;
@@ -191,13 +196,25 @@
         .imageContainer.empty:nth-child(7):after {
             content: 'N';
         }
+        .theme-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: url("./images/halloween/bg1.jpg") no-repeat center center;
+            background-size: cover;
+            opacity: .33;
+        }
+
     </style>
 </head>
 <body>
-
+<div class="theme-background"></div>
 <!-- HTML -->
 <a href="https://jira.corp.adobe.com/secure/RapidBoard.jspa?rapidView=37122" target="_blank">
-    <img class="jira" src="./images/clippy.png" alt="Jira">
+    <img class="jira" src="./images/halloween/clippy.png" alt="Jira">
 </a>
 
 <h1>DSU<span>Random</span>User<span>Selector</span></h1>
@@ -213,14 +230,15 @@
 
 <!-- JS -->
 <script>
+    const theme = "/halloween";
     const images = [
-    "./images/Jed.png",
-    "./images/Carlos.png",
-    "./images/Shahbaz.png",
-    "./images/Sheridan.png",
-    "./images/Gayane.png",
-    "./images/Sanjay.png",
-    "./images/Amy.png"
+    `./images${theme}/Jed.jpg`,
+    `./images${theme}/Carlos.jpg`,
+    `./images${theme}/Shahbaz.jpg`,
+    `./images${theme}/Sheridan.jpg`,
+    `./images${theme}/Gayane.jpg`,
+    `./images${theme}/Sanjay.jpg`,
+    `./images${theme}/Amy.jpg`
     ];
     const userName = document.getElementById("userName");
     const imageGrid = document.getElementById("imageGrid");
