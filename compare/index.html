@@ -25,6 +25,9 @@
     h1 span {
         font-weight: 600;
     }
+    h1#title {
+        cursor: pointer;
+    }
     .header {
         position: sticky;
         top: 0;
@@ -102,7 +105,7 @@
     }
     .comparison-pages {
         position: relative;
-        height: 6000px;
+        height: 5000px;
     }
     .page2-container, .page1-container {
         position: absolute;
@@ -173,7 +176,7 @@
 </head>
 <body>
 
-<h1><b>&check;</b>&nbsp; Page <span>Comparison</span> Tool</h1>
+<h1 id="title" title="Reset"><b>&check;</b>&nbsp; Page <span>Comparison</span> Tool</h1>
 
 <div class="container">
     <div class="comparison" id="comparison">
@@ -194,6 +197,7 @@
         </div>
         <div class="comparison-pages">
             <div class="page1-container">
+                <iframe class="page1" id="iframe1" src="" alt="Page 1"></iframe>
                 <div class="welcome">
                     <h1>Page <span class="page-number">1</span></h1>
                     <p><b>Usage:</b></p>
@@ -202,22 +206,22 @@
                         <li>Use the <b>Slider</b> to compare the pages.</li>
                         <li>Use the <b>Page 1</b> and <b>Page 2</b> <i>buttons</i> to switch between the pages.</li>
                         <li>Use the keys "<b>1</b>" and "<b>2</b>" on the keyboard to switch between the pages.</li>
-                        <li>Use these URL parameters to preload pages to compare the same page with a different caas version: <b>url</b> and <b>caasver</b>:<br>
+                        <li>Use these URL parameters to preload pages to compare the same page with a different caas version: <b>url</b> and <b>caasver</b>.<br>
                             For example:<br>
                             <tt><b>url</b>=https://www.adobe.com/events.html</tt><br>
-                            <tt><b>caasver</b>=0.83.3</tt><br>                           
+                            <tt><b>caasver</b>=0.83.1</tt><br>                           
                         </li>
                         <li>Use these URL parameters to preload pages from diferent locations to compare: <b>url1</b> and <b>url2</b>:<br>
                             For example:<br>
                             <tt><b>url1</b>=https://www.adobe.com/events.html</tt><br>
-                            <tt><b>url2</b>=https://www.stage.adobe.com/events.html</tt><br>
+                            <tt><b>url2</b>=https://www.stageadobe.com/events.html</tt><br>
                         </li>
                     </ul>
                 </div>
-                <iframe class="page1" id="iframe1" src="" alt="Page 1"></iframe>
             </div>
             <div class="page2-container">
-                    <div class="welcome">
+                <iframe class="page2" id="iframe2" src="" alt="Page 2"></iframe>
+                <div class="welcome">
                     <h1>Page <span class="page-number">2</span></h1>
                     <p><b>Usage:</b></p>
                     <ul class="usage-list">
@@ -225,19 +229,18 @@
                         <li>Use the <b>Slider</b> to compare the pages.</li>
                         <li>Use the <b>Page 1</b> and <b>Page 2</b> <i>buttons</i> to switch between the pages.</li>
                         <li>Use the keys "<b>1</b>" and "<b>2</b>" on the keyboard to switch between the pages.</li>
-                        <li>Use these URL parameters to preload pages to compare the same page with a different caas version: <b>url</b> and <b>caasver</b>:<br>
+                        <li>Use these URL parameters to preload pages to compare the same page with a different caas version: <b>url</b> and <b>caasver</b>.<br>
                             For example:<br>
                             <tt><b>url</b>=https://www.adobe.com/events.html</tt><br>
-                            <tt><b>caasver</b>=0.83.3</tt><br>                           
+                            <tt><b>caasver</b>=0.83.1</tt><br>                           
                         </li>
                         <li>Use these URL parameters to preload pages from diferent locations to compare: <b>url1</b> and <b>url2</b>:<br>
                             For example:<br>
                             <tt><b>url1</b>=https://www.adobe.com/events.html</tt><br>
-                            <tt><b>url2</b>=https://www.stage.adobe.com/events.html</tt><br>
+                            <tt><b>url2</b>=https://www.stageadobe.com/events.html</tt><br>
                         </li>
                     </ul>
                 </div>
-                <iframe class="page2" id="iframe2" src="" alt="Page 2"></iframe>
             </div>
         </div>
     </div>
@@ -288,6 +291,10 @@
         moveCurtain();
     }
 
+    title.addEventListener("click", () => {
+       document.location.search = "";
+    });
+
     showPage1Btn.addEventListener("click", () => {
         showPage1Btn.classList.add("selected");
         showPage2Btn.classList.remove("selected");
@@ -335,11 +342,15 @@
         if (url1 && url2) {
             iframe1.src = url1;
             iframe2.src = url2;
+            showPage1Btn.setAttribute("title", url1);
+            showPage2Btn.setAttribute("title", url2);
         } 
         // 1 URL with caasver param
         if (url && caasver) {
             iframe1.src = url;
             iframe2.src = url + "?caasver=" + caasver;
+            showPage1Btn.setAttribute("title", url);
+            showPage2Btn.setAttribute("title", url + "?caasver=" + caasver);
         }
     });
 </script>
