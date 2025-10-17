@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+  <title>Page Comparison Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      margin: 0 auto;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      padding: 0;
+      background: #fafafa;
+    }
+    h1 {
+        text-align: center;
+        font-weight: 400;
+        letter-spacing: -2px;
+        margin: 10px 0 20px;
+    }
+    h1 b {
+        border: solid 1px #000;
+        border-radius: 6px;
+        background: linear-gradient(45deg, #dedede, transparent);
+    }
+    h1 span {
+        font-weight: 600;
+    }
+    .header {
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        background: #fff;
+    }
+    .header-content {
+        background: linear-gradient(45deg, #33333320, transparent, #33333320);
+        padding: 2px;
+    }
+    .header-content button {
+        padding: 10px;
+        margin: 10px;
+        border-radius: 6px;
+        border: solid 1px #aaa;
+        background: #fafafa;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-color: #ccc;
+        width: 125px;
+    }
+    .header-content button:hover {
+        background: #505050;
+        color: #fff;
+    }
+    .header-content button.selected {
+        background: #666666;
+        color: #fff;
+    }
+    .slider-controls {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    .welcome {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        height: 60vh;
+        width: 1268px;
+    }
+    .page-number {
+        font-size: 120px;
+        font-weight: 600;
+        vertical-align: middle;
+    }
+    .welcome p, .welcome ul {
+        width: 540px;
+        margin: 0 auto;
+        text-align: left;
+    }
+    ul.usage-list li {
+        margin: 8px 0;
+    }
+    .container {
+        width: 1466px;
+        margin: 0 auto;
+        max-width: 98%;
+    }
+    .container .comparison {
+        width: 100%;
+        height: auto;
+    }
+    .container input[type=range] {
+        -webkit-appearance: auto;
+        top: 6px;
+        background-color: gray;
+        left: 0;
+        right: 0;
+        margin: 0 auto 12px auto;
+        width: 100%;
+    }
+    .comparison-pages {
+        position: relative;
+        height: 6000px;
+    }
+    .page2-container, .page1-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        background-color: #fff;
+    }
+    .page2-container {
+        overflow: hidden;
+        border-right: 0 solid transparent;
+        width: 0%;
+    }
+    iframe {
+        width: 1464px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border: solid 1px #dedede;
+    }
+    button.editPage1, button.editPage2 {
+        margin: 0 -9px;
+        border-radius: 50%;
+        width: 40px;
+        transform: rotateY(180deg);
+    }
+    .hidden {
+        display: none !important;
+        visibility: hidden !important;
+        z-index: -1;
+    }
+    #initialState {
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        height: calc(100vh - 240px);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+    }
+    .url-inputs {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 20px;
+    }
+    .url-inputs input[type="text"] {
+        width: 500px;
+        max-width: 90%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    .url-inputs button {
+        width: 160px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #007bff;
+        color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<h1><b>&check;</b>&nbsp; Page <span>Comparison</span> Tool</h1>
+
+<div class="container">
+    <div class="comparison" id="comparison">
+        <div class="header">
+            <div class="header-content">
+                <div class="slider-controls">
+                    <div>
+                        <button class="showPage1Btn selected">Page 1</button>
+                        <button class="editPage1" title="Edit Page 1">&#9998;</button>
+                    </div>
+                    <div>
+                        <button class="editPage2" title="Edit Page 2">&#9998;</button>
+                        <button class="showPage2Btn">Page 2</button>
+                    </div>
+                </div>
+                <input type="range" min="0" max="100" value="0" id="slider" oninput="moveCurtain()">
+            </div>
+        </div>
+        <div class="comparison-pages">
+            <div class="page1-container">
+                <div class="welcome">
+                    <h1>Page <span class="page-number">1</span></h1>
+                    <p><b>Usage:</b></p>
+                    <ul class="usage-list">
+                        <li>Use the <b>Edit</b> buttons to enter the URLs of the pages 1 and 2.</li>
+                        <li>Use the <b>Slider</b> to compare the pages.</li>
+                        <li>Use the <b>Page 1</b> and <b>Page 2</b> <i>buttons</i> to switch between the pages.</li>
+                        <li>Use the keys "<b>1</b>" and "<b>2</b>" on the keyboard to switch between the pages.</li>
+                        <li>Use these URL parameters to preload pages to compare: <b>url</b> and <b>caasver</b>:<br>
+                            For example:<br>
+                            <tt><b>url</b>=https://www.adobe.com/events.html</tt><br>
+                            <tt><b>caasver</b>=0.83.1</tt><br>                           
+                        </li>
+                        <li>Use these URL parameters to preload pages from diferent locations to compare: <b>url1</b> and <b>url2</b>:<br>
+                            For example:<br>
+                            <tt><b>url1</b>=https://www.adobe.com/events.html</tt><br>
+                            <tt><b>url2</b>=https://www.stageadobe.com/events.html</tt><br>
+                        </li>
+                    </ul>
+                </div>
+                <iframe class="page1" id="iframe1" src="" alt="Page 1"></iframe>
+            </div>
+            <div class="page2-container">
+                    <div class="welcome">
+                    <h1>Page <span class="page-number">2</span></h1>
+                    <p><b>Usage:</b></p>
+                    <ul class="usage-list">
+                        <li>Use the <b>Edit</b> buttons to enter the URLs of the pages 1 and 2.</li>
+                        <li>Use the <b>Slider</b> to compare the pages.</li>
+                        <li>Use the <b>Page 1</b> and <b>Page 2</b> <i>buttons</i> to switch between the pages.</li>
+                        <li>Use the keys "<b>1</b>" and "<b>2</b>" on the keyboard to switch between the pages.</li>
+                        <li>Use these URL parameters to preload pages to compare: <b>url</b> and <b>caasver</b>:<br>
+                            For example:<br>
+                            <tt><b>url</b>=https://www.adobe.com/events.html</tt><br>
+                            <tt><b>caasver</b>=0.83.1</tt><br>                           
+                        </li>
+                        <li>Use these URL parameters to preload pages from diferent locations to compare: <b>url1</b> and <b>url2</b>:<br>
+                            For example:<br>
+                            <tt><b>url1</b>=https://www.adobe.com/events.html</tt><br>
+                            <tt><b>url2</b>=https://www.stageadobe.com/events.html</tt><br>
+                        </li>
+                    </ul>
+                </div>
+                <iframe class="page2" id="iframe2" src="" alt="Page 2"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Page Comparison Slider
+    const slider = document.getElementById("slider");
+    const divisor = document.getElementById("divisor");
+    const showPage1Btn = document.querySelector(".showPage1Btn");
+    const showPage2Btn = document.querySelector(".showPage2Btn");
+    const page2Container = document.querySelector(".page2-container");
+    const comparisonPages = document.querySelector(".comparison-pages");
+    const editPage1 = document.querySelector(".editPage1");
+    const editPage2 = document.querySelector(".editPage2");
+
+    // URL Params functionality
+    const urlParams = new URLSearchParams(window.location.search);
+    // Handle two different URLs
+    const url1 = urlParams.get("url1");
+    const url2 = urlParams.get("url2");
+    // Handle one URL for url1 and adds the param to url2
+    const url = urlParams.get("url");
+    const caasver = urlParams.get("caasver");
+
+    function moveCurtain() {
+        page2Container.style.width = slider.value+"%";
+        if (slider.value == 0) {
+            page2Container.style.borderColor = "transparent";
+            page2Container.style.borderWidth = "0";
+            showPage1Btn.classList.add("selected");
+            showPage2Btn.classList.remove("selected");    
+        }else if (slider.value == 100) {
+            page2Container.style.borderColor = "transparent";
+            page2Container.style.borderWidth = "0";
+            showPage1Btn.classList.remove("selected");
+            showPage2Btn.classList.add("selected");
+        } else {
+            page2Container.style.borderColor = "#1075ff50";
+            page2Container.style.borderWidth = "6px";
+            showPage2Btn.classList.remove("selected");
+            showPage1Btn.classList.remove("selected");
+        }
+    }
+
+    function showPage(page) {
+        slider.value = page == 1 ? 0 : 100;
+        moveCurtain();
+    }
+
+    showPage1Btn.addEventListener("click", () => {
+        showPage1Btn.classList.add("selected");
+        showPage2Btn.classList.remove("selected");
+        showPage(1);
+    });
+
+    showPage2Btn.addEventListener("click", () => {
+        showPage2Btn.classList.add("selected");
+        showPage1Btn.classList.remove("selected");
+        showPage(2);
+    });
+
+    editPage1.addEventListener("click", () => {
+        const url = prompt("Enter the URL of the page 1");
+        iframe1.src = url;
+        showPage1Btn.setAttribute("title", url);
+    });
+
+    editPage2.addEventListener("click", () => {
+        const url = prompt("Enter the URL of the page 2");
+        iframe2.src = url;
+        showPage2Btn.setAttribute("title", url);
+    });
+
+    // Keydown Navigation
+    document.addEventListener("keydown", function(e) {
+        if (document.activeElement.tagName == 'INPUT' || document.activeElement.tagName == 'TEXTAREA') {
+            return;
+        }
+        if (e.key === "1" || e.code === "Digit1" || e.code === "Numpad1") {
+            showPage(1);
+            e.preventDefault();
+        }
+        if (e.key === "2" || e.code === "Digit2" || e.code === "Numpad2") {
+            showPage(2);
+            e.preventDefault();
+        }
+    });
+
+    // Document Loaded
+    document.addEventListener("DOMContentLoaded", function() {
+        // reset iframes to top
+        comparisonPages.scrollTo({ top: 0, behavior: "auto" });
+        // 2 URL functionality
+        if (url1 && url2) {
+            iframe1.src = url1;
+            iframe2.src = url2;
+        } 
+        // 1 URL with caasver param
+        if (url && caasver) {
+            iframe1.src = url;
+            iframe2.src = url + "?caasver=" + caasver;
+        }
+    });
+</script>
+
+</body>
+</html>
