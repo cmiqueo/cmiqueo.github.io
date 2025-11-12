@@ -256,7 +256,7 @@
 <!-- JS -->
 <script>
     const defaultTheme = "cartoon";
-    const theme = `/${window?.location?.hash?.replace("#", "/") || defaultTheme}`; // "/halloween" "/corporate", ""
+    const theme = `/${window?.location?.hash?.replace("#", "") || defaultTheme}`;
 
     const images = [
     `./images${theme}/Jed.jpg`,
