@@ -218,7 +218,8 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            /* background: url("./images/halloween/bg1.jpg") no-repeat center center; */
+            background-position: center;
+            background-repeat: no-repeat;
             background-size: cover;
             opacity: .33;
         }
@@ -230,10 +231,10 @@
 <div class="theme-selector">
     <select id="themes">
         <option disabled selected>Theme</option>
-        <option value="/default">Default</option>
-        <option value="/halloween">Halloween</option>
-        <option value="/corporate">Corporate</option>
-        <option value="/cartoon">Cartoon</option>
+        <option value="default">Default</option>
+        <option value="halloween">Halloween</option>
+        <option value="corporate">Corporate</option>
+        <option value="cartoon">Cartoon</option>
     </select>
 </div>
 <!-- HTML -->
@@ -254,8 +255,8 @@
 
 <!-- JS -->
 <script>
-    const defaultTheme = "/cartoon";
-    const theme = window?.location?.hash?.replace("#", "/") || defaultTheme; // "/halloween" "/corporate", ""
+    const defaultTheme = "cartoon";
+    const theme = `/${window?.location?.hash?.replace("#", "/") || defaultTheme}`; // "/halloween" "/corporate", ""
 
     const images = [
     `./images${theme}/Jed.jpg`,
