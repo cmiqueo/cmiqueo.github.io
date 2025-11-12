@@ -196,6 +196,21 @@
         .imageContainer.empty:nth-child(7):after {
             content: 'N';
         }
+
+        .theme-selector {
+            position: absolute;
+            right: 0;
+        }
+        .theme-selector select {
+            padding: 5px;
+            margin: 0 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+            background: transparent;
+            color: #fff;
+            opacity: .5;
+        }
         .theme-background {
             position: fixed;
             top: 0;
@@ -212,9 +227,18 @@
 </head>
 <body>
 <div class="theme-background"></div>
+<div class="theme-selector">
+    <select id="themes">
+        <option disabled selected>Theme</option>
+        <option value="/default">Default</option>
+        <option value="/halloween">Halloween</option>
+        <option value="/corporate">Corporate</option>
+        <option value="/cartoon">Cartoon</option>
+    </select>
+</div>
 <!-- HTML -->
 <a href="https://jira.corp.adobe.com/secure/RapidBoard.jspa?rapidView=37122" target="_blank">
-    <img class="jira" src="./images/clippy.png" alt="Jira">
+    <img class="jira" src="./images/default/clippy.png" alt="Jira">
 </a>
 
 <h1>DSU<span>Random</span>User<span>Selector</span></h1>
@@ -230,7 +254,9 @@
 
 <!-- JS -->
 <script>
-    const theme = "/cartoon"; // "/halloween" "/corporate", ""
+    const defaultTheme = "/cartoon";
+    const theme = window?.location?.hash?.replace("#", "/") || defaultTheme; // "/halloween" "/corporate", ""
+
     const images = [
     `./images${theme}/Jed.jpg`,
     `./images${theme}/Carlos.jpg`,
@@ -245,7 +271,12 @@
     if (theme === "/corporate") {
         document.querySelector(".jira").style.filter = "invert(1) contrast(0.5)";
     }
-
+    themeSelector = document.querySelector("select#themes");
+    themeSelector.addEventListener("change", (e) => {
+        const selectedTheme = e.target.value;
+        window.location.hash = selectedTheme.replace("/", "");
+        window.location.reload();
+    });
 
     const userName = document.getElementById("userName");
     const imageGrid = document.getElementById("imageGrid");
@@ -265,6 +296,7 @@
     }
 
     function startMainTimer() {
+        themeSelector.style.display = "none";
         timerDisplay.parentElement.classList.add("running");
         const startTimestamp = Date.now();
         const updateMainTimer = () => {
@@ -403,6 +435,7 @@
         userName.textContent = "Welcome";
         selectButton.textContent = "Start Meeting";
         selectButton.classList.remove("reset");
+        themeSelector.style.display = "block";
     }
 
     function clearTimers() {
