@@ -235,6 +235,7 @@
         <option value="halloween">Halloween</option>
         <option value="corporate">Corporate</option>
         <option value="cartoon">Cartoon</option>
+        <option value="teams">Teams</option>
     </select>
 </div>
 <!-- HTML -->
@@ -255,7 +256,7 @@
 
 <!-- JS -->
 <script>
-    const defaultTheme = "cartoon";
+    const defaultTheme = "default";
 
     const theme = `/${window.location.hash?.replace("#", "") || defaultTheme}`;
     window.location.hash = "";
