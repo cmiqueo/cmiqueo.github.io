@@ -232,6 +232,7 @@
     <select id="themes">
         <option disabled selected>Theme</option>
         <option value="default">Default</option>
+        <option value="christmas">Christmas</option>
         <option value="halloween">Halloween</option>
         <option value="corporate">Corporate</option>
         <option value="cartoon">Cartoon</option>
@@ -244,7 +245,7 @@
 </a>
 
 <h1>DSU<span>Random</span>User<span>Selector</span></h1>
-<h2 id="userName">Welcome!</h2>
+<h2 id="userName">Merry Christmas!</h2>
 <div id="imageGrid"></div>
 <button id="selectButton">Start Meeting</button>
 
@@ -256,7 +257,7 @@
 
 <!-- JS -->
 <script>
-    const defaultTheme = "default";
+    const defaultTheme = "christmas";
 
     const theme = `/${window.location.hash?.replace("#", "") || defaultTheme}`;
     window.location.hash = "";
