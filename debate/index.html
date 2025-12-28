@@ -39,9 +39,7 @@
             height: 50%;
             background-color: #444;
             color: white;
-            /* margin: 2px; */
             padding: 30px;
-            /* border-radius: 10px; */
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -50,6 +48,7 @@
             flex-direction: column;
             border-bottom: solid 2px #666;
             position: relative;
+            border-radius: 80px 0;
         }
         .speaker > svg {
             position: absolute;
@@ -62,7 +61,8 @@
             z-index: 0;
         }
         .active {
-            background-color: #008800;
+            background: radial-gradient(#008802, #000);
+            border-color: solid 1px #008802;
         }
         .timer {
             font-size: 60px;
