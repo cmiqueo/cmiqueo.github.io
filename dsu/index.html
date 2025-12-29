@@ -237,6 +237,7 @@
         <option value="corporate">Corporate</option>
         <option value="cartoon">Cartoon</option>
         <option value="teams">Teams</option>
+        <option value="new-year">New Year</option>
     </select>
 </div>
 <!-- HTML -->
@@ -245,7 +246,7 @@
 </a>
 
 <h1>DSU<span>Random</span>User<span>Selector</span></h1>
-<h2 id="userName">Merry Christmas!</h2>
+<h2 id="userName">Happy New Year!</h2>
 <div id="imageGrid"></div>
 <button id="selectButton">Start Meeting</button>
 
@@ -257,7 +258,7 @@
 
 <!-- JS -->
 <script>
-    const defaultTheme = "christmas";
+    const defaultTheme = "new-year";
 
     const theme = `/${window.location.hash?.replace("#", "") || defaultTheme}`;
     window.location.hash = "";
