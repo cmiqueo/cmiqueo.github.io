@@ -238,6 +238,7 @@
         <option value="cartoon">Cartoon</option>
         <option value="teams">Teams</option>
         <option value="new-year">New Year</option>
+        <option value="superbowl">SuperBowl</option>
     </select>
 </div>
 <!-- HTML -->
@@ -246,7 +247,7 @@
 </a>
 
 <h1>DSU<span>Random</span>User<span>Selector</span></h1>
-<h2 id="userName">Welcome!</h2>
+<h2 id="userName">SuperBowl Week!</h2>
 <div id="imageGrid"></div>
 <button id="selectButton">Start Meeting</button>
 
@@ -258,7 +259,7 @@
 
 <!-- JS -->
 <script>
-    const defaultTheme = "default";
+    const defaultTheme = "superbowl";
 
     const theme = `/${window.location.hash?.replace("#", "") || defaultTheme}`;
     window.location.hash = "";
