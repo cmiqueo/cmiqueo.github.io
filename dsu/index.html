@@ -239,6 +239,8 @@
         <option value="teams">Teams</option>
         <option value="new-year">New Year</option>
         <option value="superbowl">SuperBowl</option>
+        <option value="pirates">Pirates</option>
+        <option value="random">Random</option>
     </select>
 </div>
 <!-- HTML -->
@@ -259,19 +261,40 @@
 
 <!-- JS -->
 <script>
-    const defaultTheme = "default";
+    const defaultTheme = "random";
+
+    const themes = ["default",
+        "christmas", 
+        "halloween",
+        "corporate",
+        "cartoon",
+        "teams",
+        "new-year",
+        "superbowl",
+        "pirates",
+    ];
 
     const theme = `/${window.location.hash?.replace("#", "") || defaultTheme}`;
     window.location.hash = "";
 
+    const randomTheme = true;
+    const getTheme = () => { 
+        console.log(theme);
+        if (theme === "/random") {
+            return `/${themes[Math.floor(Math.random() * themes.length)]}`;
+        } else {
+            return theme;
+        }
+    }
+
     const images = [
-    `./images${theme}/Jed.jpg`,
-    `./images${theme}/Carlos.jpg`,
-    `./images${theme}/Shahbaz.jpg`,
-    `./images${theme}/Sheridan.jpg`,
-    `./images${theme}/Gayane.jpg`,
-    `./images${theme}/Sanjay.jpg`,
-    `./images${theme}/Amy.jpg`
+    `./images${getTheme()}/Jed.jpg`,
+    `./images${getTheme()}/Carlos.jpg`,
+    `./images${getTheme()}/Shahbaz.jpg`,
+    `./images${getTheme()}/Sheridan.jpg`,
+    `./images${getTheme()}/Gayane.jpg`,
+    `./images${getTheme()}/Sanjay.jpg`,
+    `./images${getTheme()}/Amy.jpg`
     ];
     document.querySelector(".theme-background").style.backgroundImage = `url("./images${theme}/background.jpg")`;
     document.querySelector(".jira").setAttribute("src", `./images${theme}/clippy.png`);
@@ -295,6 +318,7 @@
     let availableImages = [...images];
 
     function init() {
+        userName.innerHTML = `Welcome to the "${theme.replace("/", "")}" theme`;
         images.forEach(() => {
             const div = document.createElement("div");
             div.classList.add("imageContainer", "empty");
