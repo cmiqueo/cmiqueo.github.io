@@ -288,9 +288,9 @@
     }
 
     const images = [
+    `./images${getTheme()}/Shahbaz.jpg`,
     `./images${getTheme()}/Jed.jpg`,
     `./images${getTheme()}/Carlos.jpg`,
-    `./images${getTheme()}/Shahbaz.jpg`,
     `./images${getTheme()}/Sheridan.jpg`,
     `./images${getTheme()}/Gayane.jpg`,
     `./images${getTheme()}/Sanjay.jpg`,
@@ -429,7 +429,8 @@
 
     function selectRandomImage() {
         removeSelected();
-        const idx = Math.floor(Math.random() * availableImages.length);
+        // First speaker is always the first entry, subsequent speakers are random
+        const idx = availableImages.length === images.length ? 0 : Math.floor(Math.random() * availableImages.length);
         displaySpeaker(availableImages[idx]);
     }
 
