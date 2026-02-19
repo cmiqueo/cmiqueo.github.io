@@ -430,7 +430,8 @@
     function selectRandomImage() {
         removeSelected();
         // First speaker is always the first entry, subsequent speakers are random
-        const idx = availableImages.length === images.length ? 0 : Math.floor(Math.random() * availableImages.length);
+        // const idx = availableImages.length === images.length ? 0 : Math.floor(Math.random() * availableImages.length);
+        const idx = Math.floor(Math.random() * availableImages.length);
         displaySpeaker(availableImages[idx]);
     }
 
