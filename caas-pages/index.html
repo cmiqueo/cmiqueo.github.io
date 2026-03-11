@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cards Link Viewer</title>
+
+<style>
+:root {
+  --bg: #f3f6fb;
+  --bg-accent: #e6ecff;
+  --surface: #ffffff;
+  --text: #1d2433;
+  --text-muted: #6a7386;
+  --border: #dbe2ef;
+  --primary: #3868ff;
+  --primary-hover: #2f57d8;
+  --ring: rgba(56, 104, 255, 0.2);
+  --shadow: 0 10px 30px rgba(24, 39, 75, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top right, var(--bg-accent) 0%, transparent 40%),
+    var(--bg);
+  padding: 32px 20px;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 28px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.7rem;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin: 8px 0 24px;
+  color: var(--text-muted);
+}
+
+.controls {
+  display: grid;
+  /* grid-template-columns: 1fr 130px auto; */
+  grid-template-columns: 1fr 1fr 120px 180px;
+  width: 720px;
+  gap: 12px;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+select,
+input[type="number"] {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+select:focus,
+input[type="number"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  padding: 11px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+button:hover {
+  background: var(--primary-hover);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+#links {
+  margin: 22px 0 0;
+  padding-left: 22px;
+}
+
+.caas-card {
+  background: #fff;
+  /* border: 1px solid var(--border); */
+  /* border-radius: 10px; */
+  padding: 10px 12px;
+  color: #ddd;
+}
+
+.caas-card:nth-child(odd) {
+  background: #f9fafb;
+}
+
+.caas-card a {
+  color: var(--primary-hover);
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.caas-card a:hover {
+  text-decoration: underline;
+}
+
+#link-count {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 700px) {
+  .app {
+    padding: 20px;
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main class="app">
+  <h1>Content Links</h1>
+  <p class="subtitle">Choose a source and fetch the latest card URLs.</p>
+
+  <section class="controls">
+    <div class="field">
+      <label for="source">Source</label>
+      <select id="source">
+        <option value="adobe-blog">Adobe Blog</option>
+        <option value="bacom">Bacom</option>
+        <option value="bacom-blog">Bacom Blog</option>
+        <option value="doccloud">DocCloud</option>
+        <option value="events">Events</option>
+        <option value="hawks">Hawks</option>
+        <option value="milo">Milo</option>
+        <option value="northstar">Northstar</option>
+        <option value="news">Newsroom</option>
+      </select>
+    </div>
+
+    <div class="format">
+      <label for="format">Format</label>
+      <select id="format">
+        <option value="title">Title</option>
+        <option value="link">Link</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="size">Size</label>
+      <input type="number" id="size" value="25" min="1" max="200">
+    </div>
+
+    <button onclick="loadData()">Load Links</button>
+  </section>
+
+  <div id="link-count"></div>
+  <ol id="links"></ol>
+</main>
+
+<script>
+  async function loadData() {
+    const sizeInput = document.getElementById("size");
+    const sourceInput = document.getElementById("source");
+    const size = sizeInput.value;
+
+    const formatInput = document.getElementById("format");
+    const format = formatInput.value;
+
+    const DATA_URL = `https://www.adobe.com/chimera-api/collection?originSelection=${sourceInput.value}&size=${size}`;
+
+    const container = document.getElementById("links");
+    container.innerHTML = "Loading...";
+
+    try {
+      const response = await fetch(DATA_URL);
+      const data = await response.json();
+
+      container.innerHTML = "";
+      const linkCount = document.getElementById("link-count");
+      linkCount.textContent = `${data.cards.length} links`;
+
+      data.cards.forEach(card => {
+
+        const title = card.contentArea?.title;
+        const url = card.contentArea?.url;
+
+        if (!title || !url) return;
+
+        const li = document.createElement("li");
+        li.className = "caas-card";
+        const a = document.createElement("a");
+        a.href = url;
+        a.textContent = format === "title" ? title : url;
+        a.target = "_blank";
+        li.appendChild(a);
+        container.appendChild(li);
+      });
+
+    } catch (err) {
+      container.innerHTML = "Error loading data.";
+      console.error(err);
+    }
+}
+</script>
+
+</body>
+</html>
