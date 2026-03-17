@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown to HTML</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Special+Elite&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f6f1e7;
+      --panel: rgba(255, 252, 246, 0.88);
+      --border: #d8c8ae;
+      --text: #2d2418;
+      --muted: #6b5d49;
+      --accent: #b55d2d;
+      --accent-strong: #8f431b;
+      --preview: #fffdf8;
+      --shadow: 0 20px 45px rgba(60, 41, 16, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      /* font-family: "Open Sans", sans-serif; */
+      font-weight: 300;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(181, 93, 45, 0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(143, 67, 27, 0.16), transparent 26%),
+        linear-gradient(135deg, #efe5d2 0%, #f8f3ea 45%, #ebe0cb 100%);
+    }
+
+    .shell {
+      width: 94%;
+      max-width: 1800px;
+      margin: 32px auto;
+      padding: 28px;
+      border: 1px solid rgba(216, 200, 174, 0.75);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.3rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      max-width: 56ch;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 160ms ease, background-color 160ms ease, opacity 160ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .primary {
+      background: var(--accent);
+      color: #fff9f0;
+    }
+
+    .primary:hover {
+      background: var(--accent-strong);
+    }
+
+    .secondary {
+      background: rgba(216, 200, 174, 0.38);
+      color: var(--text);
+      border: 1px solid rgba(216, 200, 174, 0.8);
+    }
+
+    .grid {
+      display: grid;
+      /* grid-template-columns: repeat(2, minmax(0, 1fr)); */
+      grid-template-columns: 35% 65%;
+      gap: 18px;
+    }
+
+    .panel {
+      min-width: 0;
+      border: 1px solid rgba(216, 200, 174, 0.9);
+      border-radius: 20px;
+      overflow: hidden;
+      background: rgba(255, 253, 248, 0.92);
+    }
+
+    .panel header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(216, 200, 174, 0.8);
+      background: rgba(239, 229, 210, 0.58);
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .panel-toggle {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      background: rgba(239, 229, 210, 0.58);
+    }
+
+    .panel-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .panel-toggle::after {
+      content: "Expand";
+      color: var(--accent-strong);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    details[open] > .panel-toggle {
+      border-bottom: 1px solid rgba(216, 200, 174, 0.8);
+    }
+
+    details[open] > .panel-toggle::after {
+      content: "Collapse";
+    }
+
+    textarea,
+    pre,
+    .preview {
+      width: 100%;
+      min-height: 460px;
+      margin: 0;
+      padding: 18px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 0.98rem;
+      line-height: 1.6;
+    }
+
+    textarea {
+      resize: vertical;
+      outline: none;
+      font-family: "Courier New", Courier, monospace;
+    }
+    
+    #markdown-input {
+      height: 100%;
+      color: #bbb;
+    }    
+    
+    pre {
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "Courier New", Courier, monospace;
+      background: #fefcf7;
+    }
+
+    .preview {
+      border-top: 1px solid rgba(216, 200, 174, 0.8);
+      background: var(--preview);
+    }
+
+    .preview > :first-child {
+      margin-top: 0;
+    }
+
+    .preview > :last-child {
+      margin-bottom: 0;
+    }
+
+    .preview h1,
+    .preview h2,
+    .preview h3,
+    .preview h4,
+    .preview h5,
+    .preview h6 {
+      line-height: 1.1;
+      margin: 1.2em 0 0.5em;
+    }
+
+    .preview p,
+    .preview ul,
+    .preview ol,
+    .preview blockquote {
+      margin: 0 0 1em;
+    }
+
+    .preview code {
+      padding: 0.08em 0.32em;
+      border-radius: 6px;
+      background: rgba(216, 200, 174, 0.32);
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.92em;
+    }
+
+    .preview pre {
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(216, 200, 174, 0.72);
+      background: #f4ead8;
+    }
+
+    .preview pre code {
+      padding: 0;
+      background: transparent;
+    }
+
+    .preview blockquote {
+      padding: 0.25rem 0 0.25rem 1rem;
+      border-left: 4px solid var(--accent);
+      color: #59472f;
+    }
+
+    .preview a {
+      color: var(--accent-strong);
+    }
+
+    .preview table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1em;
+    }
+
+    .preview th,
+    .preview td {
+      padding: 10px 12px;
+      border: 1px solid rgba(216, 200, 174, 0.85);
+      text-align: left;
+    }
+
+    .preview th {
+      background: rgba(239, 229, 210, 0.7);
+    }
+
+    .status {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      textarea,
+      pre,
+      .preview {
+        min-height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <h1>Markdown > HTML</h1>
+        <p class="subtitle">Paste Markdown on the left and get both the rendered preview and generated HTML instantly, all inside one standalone file.</p>
+      </div>
+      <div class="actions">
+        <button id="copy-html" class="primary" type="button">Copy HTML</button>
+        <button id="clear-all" class="secondary" type="button">Clear</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <header>
+          <div>
+            <h2>Markdown</h2>
+            <p>Type or paste source content</p>
+          </div>
+        </header>
+        <textarea id="markdown-input" spellcheck="false" aria-label="Markdown input"></textarea>
+      </article>
+
+      <article class="panel">
+        <header>
+          <div>
+            <h2>Rendered Preview</h2>
+            <p>Live output from the parser</p>
+          </div>
+        </header>
+        <div id="preview" class="preview" aria-live="polite"></div>
+      </article>
+
+      <details class="panel" style="grid-column: 1 / -1;">
+        <summary class="panel-toggle">
+          <div>
+            <h2>HTML Output</h2>
+            <p>Generated markup you can copy</p>
+          </div>
+        </summary>
+        <pre id="html-output"></pre>
+      </details>
+    </section>
+
+    <p id="status" class="status">Ready.</p>
+  </main>
+
+  <script>
+    const markdownInput = document.getElementById("markdown-input");
+    const preview = document.getElementById("preview");
+    const htmlOutput = document.getElementById("html-output");
+    const copyButton = document.getElementById("copy-html");
+    const clearButton = document.getElementById("clear-all");
+    const status = document.getElementById("status");
+
+    const sampleMarkdown = `# Welcome
+
+Paste your Markdown here.
+
+## Supported features
+
+- Headings
+- Paragraphs
+- **Bold** and *italic*
+- \`inline code\`
+- > Blockquotes
+- Ordered and unordered lists
+- [Links](https://example.com)
+
+\`\`\`
+function hello() {
+  return "code block";
+}
+\`\`\`
+`;
+
+    function escapeHtml(value) {
+      return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function parseInline(text) {
+      let result = escapeHtml(text);
+
+      result = result.replace(/`([^`]+)`/g, "<code>$1</code>");
+      result = result.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
+      result = result.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      result = result.replace(/__([^_]+)__/g, "<strong>$1</strong>");
+      result = result.replace(/(^|[\s(])\*([^*]+)\*(?=[\s).,!?:;]|$)/g, "$1<em>$2</em>");
+      result = result.replace(/(^|[\s(])_([^_]+)_(?=[\s).,!?:;]|$)/g, "$1<em>$2</em>");
+
+      return result;
+    }
+
+    function isOrderedListItem(line) {
+      return /^\d+\.\s+/.test(line);
+    }
+
+    function isUnorderedListItem(line) {
+      return /^[-*+]\s+/.test(line);
+    }
+
+    function renderTable(lines, startIndex) {
+      if (startIndex + 1 >= lines.length) {
+        return null;
+      }
+
+      const headerLine = lines[startIndex];
+      const dividerLine = lines[startIndex + 1];
+
+      if (!headerLine.includes("|")) {
+        return null;
+      }
+
+      const dividerMatch = /^\s*\|?(?:\s*:?-{3,}:?\s*\|)+\s*:?-{3,}:?\s*\|?\s*$/.test(dividerLine);
+      if (!dividerMatch) {
+        return null;
+      }
+
+      const parseCells = (line) =>
+        line
+          .trim()
+          .replace(/^\|/, "")
+          .replace(/\|$/, "")
+          .split("|")
+          .map((cell) => parseInline(cell.trim()));
+
+      const headers = parseCells(headerLine);
+      const bodyRows = [];
+      let index = startIndex + 2;
+
+      while (index < lines.length && lines[index].includes("|") && lines[index].trim() !== "") {
+        bodyRows.push(parseCells(lines[index]));
+        index += 1;
+      }
+
+      let html = "<table><thead><tr>";
+      headers.forEach((header) => {
+        html += `<th>${header}</th>`;
+      });
+      html += "</tr></thead><tbody>";
+
+      bodyRows.forEach((row) => {
+        html += "<tr>";
+        row.forEach((cell) => {
+          html += `<td>${cell}</td>`;
+        });
+        html += "</tr>";
+      });
+
+      html += "</tbody></table>";
+
+      return { html, nextIndex: index - 1 };
+    }
+
+    function markdownToHtml(markdown) {
+      const normalized = markdown.replace(/\r\n?/g, "\n");
+      const lines = normalized.split("\n");
+      const html = [];
+
+      let inCodeBlock = false;
+      let codeLines = [];
+      let listType = null;
+
+      function closeList() {
+        if (listType) {
+          html.push(`</${listType}>`);
+          listType = null;
+        }
+      }
+
+      for (let i = 0; i < lines.length; i += 1) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        if (trimmed.startsWith("```")) {
+          if (inCodeBlock) {
+            html.push(`<pre><code>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+            codeLines = [];
+            inCodeBlock = false;
+          } else {
+            closeList();
+            inCodeBlock = true;
+          }
+          continue;
+        }
+
+        if (inCodeBlock) {
+          codeLines.push(line);
+          continue;
+        }
+
+        const table = renderTable(lines, i);
+        if (table) {
+          closeList();
+          html.push(table.html);
+          i = table.nextIndex;
+          continue;
+        }
+
+        if (!trimmed) {
+          closeList();
+          continue;
+        }
+
+        const heading = trimmed.match(/^(#{1,6})\s+(.*)$/);
+        if (heading) {
+          closeList();
+          const level = heading[1].length;
+          html.push(`<h${level}>${parseInline(heading[2])}</h${level}>`);
+          continue;
+        }
+
+        const blockquote = trimmed.match(/^>\s?(.*)$/);
+        if (blockquote) {
+          closeList();
+          html.push(`<blockquote>${parseInline(blockquote[1])}</blockquote>`);
+          continue;
+        }
+
+        if (isOrderedListItem(trimmed)) {
+          if (listType !== "ol") {
+            closeList();
+            listType = "ol";
+            html.push("<ol>");
+          }
+          html.push(`<li>${parseInline(trimmed.replace(/^\d+\.\s+/, ""))}</li>`);
+          continue;
+        }
+
+        if (isUnorderedListItem(trimmed)) {
+          if (listType !== "ul") {
+            closeList();
+            listType = "ul";
+            html.push("<ul>");
+          }
+          html.push(`<li>${parseInline(trimmed.replace(/^[-*+]\s+/, ""))}</li>`);
+          continue;
+        }
+
+        closeList();
+        html.push(`<p>${parseInline(trimmed)}</p>`);
+      }
+
+      if (inCodeBlock) {
+        html.push(`<pre><code>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+      }
+
+      closeList();
+
+      return html.join("\n");
+    }
+
+    function updateOutput() {
+      const rendered = markdownToHtml(markdownInput.value);
+      preview.innerHTML = rendered;
+      htmlOutput.textContent = rendered;
+      status.textContent = "HTML updated live.";
+    }
+
+    copyButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(htmlOutput.textContent);
+        status.textContent = "HTML copied to clipboard.";
+      } catch (error) {
+        status.textContent = "Clipboard copy failed in this browser.";
+      }
+    });
+
+    clearButton.addEventListener("click", () => {
+      markdownInput.value = "";
+      updateOutput();
+      status.textContent = "Cleared.";
+    });
+
+    markdownInput.addEventListener("input", updateOutput);
+
+    markdownInput.value = sampleMarkdown;
+    updateOutput();
+  </script>
+</body>
+</html>
