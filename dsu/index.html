@@ -304,6 +304,8 @@
     document.querySelector(".jira").setAttribute("src", `./images${theme.toLowerCase()}/clippy.png`);
     if (theme === "/corporate") {
         document.querySelector(".jira").style.filter = "invert(1) contrast(0.5)";
+    } else if (theme === "/nasa") {
+        document.querySelector(".theme-background").style.opacity = "1";
     }
     themeSelector = document.querySelector("select#themes");
     themeSelector.addEventListener("change", (e) => {
