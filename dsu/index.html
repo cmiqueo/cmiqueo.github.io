@@ -242,6 +242,7 @@
         <option value="pirates">Pirates</option>
         <option value="random">Random</option>
         <option value="saint-patrick">Saint Patrick's</option>
+        <option value="nasa">NASA</option>
     </select>
 </div>
 <!-- HTML -->
@@ -262,7 +263,7 @@
 
 <!-- JS -->
 <script>
-    const defaultTheme = "random";
+    const defaultTheme = "NASA";
 
     const themes = ["default",
         "christmas", 
@@ -274,6 +275,7 @@
         "superbowl",
         "pirates",
         "saint-patrick",
+        "NASA",
     ];
 
     const theme = `/${window.location.hash?.replace("#", "") || defaultTheme}`;
