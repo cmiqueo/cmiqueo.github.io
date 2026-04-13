@@ -300,8 +300,8 @@
     `./images${getTheme()}/Sanjay.jpg`,
     `./images${getTheme()}/Amy.jpg`
     ];
-    document.querySelector(".theme-background").style.backgroundImage = `url("./images${theme}/background.jpg")`;
-    document.querySelector(".jira").setAttribute("src", `./images${theme}/clippy.png`);
+    document.querySelector(".theme-background").style.backgroundImage = `url("./images${theme.toLowerCase()}/background.jpg")`;
+    document.querySelector(".jira").setAttribute("src", `./images${theme.toLowerCase()}/clippy.png`);
     if (theme === "/corporate") {
         document.querySelector(".jira").style.filter = "invert(1) contrast(0.5)";
     }
