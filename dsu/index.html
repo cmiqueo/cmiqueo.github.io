@@ -278,14 +278,14 @@
         "NASA",
     ];
 
-    const theme = `/${window.location.hash?.replace("#", "") || defaultTheme}`;
+    const theme = `/${window.location.hash?.replace("#", "") || defaultTheme.toLowerCase()}`;
     window.location.hash = "";
 
     const randomTheme = true;
     const getTheme = () => { 
         console.log(theme);
         if (theme === "/random") {
-            return `/${themes[Math.floor(Math.random() * themes.length)]}`;
+            return `/${themes[Math.floor(Math.random() * themes.length)].toLowerCase()}`;
         } else {
             return theme;
         }
