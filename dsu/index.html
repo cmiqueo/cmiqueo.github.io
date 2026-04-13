@@ -263,7 +263,7 @@
 
 <!-- JS -->
 <script>
-    const defaultTheme = "NASA";
+    const defaultTheme = "nasa";
 
     const themes = ["default",
         "christmas", 
@@ -275,7 +275,7 @@
         "superbowl",
         "pirates",
         "saint-patrick",
-        "NASA",
+        "nasa",
     ];
 
     const theme = `/${window.location.hash?.replace("#", "") || defaultTheme.toLowerCase()}`;
@@ -327,6 +327,8 @@
         userName.innerHTML = `Welcome to the "${theme.replace("/", "").replace("-", " ")}" theme`;
         if (theme === "/saint-patrick") {
             userName.innerHTML = `Happy Saint Patrick's Day!`;
+        } else if (theme === "/nasa") {
+            userName.innerHTML = `Where none has gone before`;
         }
         images.forEach(() => {
             const div = document.createElement("div");
