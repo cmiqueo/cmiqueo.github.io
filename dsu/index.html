@@ -263,7 +263,7 @@
 
 <!-- JS -->
 <script>
-    const defaultTheme = "nasa";
+    const defaultTheme = "random";
 
     const themes = ["default",
         "christmas", 
@@ -292,11 +292,11 @@
     }
 
     const images = [
+    `./images${getTheme()}/Empty.jpg`,
     `./images${getTheme()}/Shahbaz.jpg`,
     `./images${getTheme()}/Jed.jpg`,
     `./images${getTheme()}/Carlos.jpg`,
     `./images${getTheme()}/Sheridan.jpg`,
-    `./images${getTheme()}/Gayane.jpg`,
     `./images${getTheme()}/Sanjay.jpg`,
     `./images${getTheme()}/Amy.jpg`
     ];
@@ -322,6 +322,9 @@
     let timerRunning = false;
     const userTimers = [];
     let availableImages = [...images];
+    // Handle empty image
+    availableImages = availableImages.filter(p => !p.endsWith("Empty.jpg"));
+
 
     function init() {
         userName.innerHTML = `Welcome to the "${theme.replace("/", "").replace("-", " ")}" theme`;
@@ -400,7 +403,6 @@
 
         // Remove used image from list
         availableImages = availableImages.filter(p => p !== imagePath);
-
         // Start new speaker timer
         const start = Date.now();
         const updateTimer = () => {
@@ -422,8 +424,8 @@
     }
 
     function removeSelected() {
-    const sel = imageGrid.querySelector("div.selected");
-    if (!sel) return;
+        const sel = imageGrid.querySelector("div.selected");
+        if (!sel) return;
         sel.classList.remove("selected");
         clearInterval(parseInt(sel.dataset.timerId));
         const name = sel.id;
@@ -440,23 +442,29 @@
 
     function selectRandomImage() {
         removeSelected();
-        // First speaker is always the first entry, subsequent speakers are random
+        // Fun hack: First speaker is always the first entry, subsequent speakers are random
         // const idx = availableImages.length === images.length ? 0 : Math.floor(Math.random() * availableImages.length);
-        const idx = Math.floor(Math.random() * availableImages.length);
+        // const idx = Math.floor(Math.random() * availableImages.length);
+        
+        // Handle empty image
+        const startIndex = availableImages.length > 1 ? 1 : 0;
+        const idx = startIndex + Math.floor(Math.random() * (availableImages.length - startIndex));
+        if (availableImages[idx] === "./images/Empty.jpg") {
+            selectRandomImage();
+            return;
+        }
         displaySpeaker(availableImages[idx]);
     }
 
     function endSpeakers() {
         userName.textContent = "Done!";
-        // userName.textContent = "The DREAM Team!";
         selectButton.textContent = "End Meeting";
         imageGrid.classList.add("done");
+        document.querySelector(".imageContainer.empty").remove();
         removeSelected();
     }
 
     function endMeeting() {
-        // userName.textContent = "Done!";
-        // userName.textContent = "The DREAM Team!";
         selectButton.textContent = "Reset Meeting";
         selectButton.classList.add("reset");
         imageGrid.classList.add("finished");
