@@ -263,7 +263,7 @@
 
 <!-- JS -->
 <script>
-    const defaultTheme = "random";
+    const defaultTheme = "jeds-attic";
 
     const themes = ["default",
         "christmas", 
@@ -276,6 +276,7 @@
         "pirates",
         "saint-patrick",
         "nasa",
+        "jeds-attic",
     ];
 
     const theme = `/${window.location.hash?.replace("#", "") || defaultTheme.toLowerCase()}`;
@@ -302,7 +303,7 @@
     ];
     document.querySelector(".theme-background").style.backgroundImage = `url("./images${theme.toLowerCase()}/background.jpg")`;
     document.querySelector(".jira").setAttribute("src", `./images${theme.toLowerCase()}/clippy.png`);
-    if (theme === "/corporate") {
+    if (theme === "/corporate" || theme === "/jeds-attic") {
         document.querySelector(".jira").style.filter = "invert(1) contrast(0.5)";
     } else if (theme === "/nasa") {
         document.querySelector(".theme-background").style.opacity = "1";
@@ -330,6 +331,8 @@
         userName.innerHTML = `Welcome to the "${theme.replace("/", "").replace("-", " ")}" theme`;
         if (theme === "/saint-patrick") {
             userName.innerHTML = `Happy Saint Patrick's Day!`;
+        } else if (theme === "/jeds-attic") {
+            userName.innerHTML = `Welcome to Jed's Attic!`;
         } else if (theme === "/nasa") {
             userName.innerHTML = `Where no one has gone before.`;
         }
