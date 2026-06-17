@@ -454,7 +454,11 @@
         const startIndex = availableImages.length > 1 ? 1 : 0;
         const idx = startIndex + Math.floor(Math.random() * (availableImages.length - startIndex));
         if (availableImages[idx] === "./images/Empty.jpg") {
-            selectRandomImage();
+                selectRandomImage();
+                return;
+        }
+        if (availableImages[idx].endsWith("Shahbaz.jpg")) {
+            if(availableImages.length == 2 || availableImages.length == 1  ) endSpeakers()
             return;
         }
         displaySpeaker(availableImages[idx]);
@@ -464,7 +468,7 @@
         userName.textContent = "Done!";
         selectButton.textContent = "End Meeting";
         imageGrid.classList.add("done");
-        document.querySelector(".imageContainer.empty").remove();
+        document.querySelector(".imageContainer.empty")?.remove();
         removeSelected();
     }
 
