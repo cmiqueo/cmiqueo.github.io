@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSS Audit Report (BEM) — Adobe CaaS</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --ink: #1f2328;
+    --muted: #6a737d;
+    --line: #e4e7eb;
+    --accent: #1473e6;
+    --consistent: #268e6c;
+    --minor: #da7b11;
+    --inconsistent: #d7373f;
+    --na: #8e8e8e;
+    --code-bg: #f2f4f6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; }
+  header.masthead {
+    background: linear-gradient(135deg, #6e6e6e, #2c2c2c);
+    color: #fff;
+    border-radius: 14px;
+    padding: 32px 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 6px 24px rgba(44,44,44,0.25);
+  }
+  header.masthead h1 { margin: 0 0 6px; font-size: 26px; letter-spacing: -0.3px; }
+  header.masthead .badge {
+    display: inline-block; background: #d7373f; color: #fff; font-size: 12px; font-weight: 700;
+    padding: 3px 12px; border-radius: 20px; letter-spacing: 0.5px; margin-bottom: 10px;
+  }
+  header.masthead .meta { font-size: 13.5px; opacity: 0.92; display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 12px; }
+  header.masthead .meta b { font-weight: 600; }
+
+  .callout {
+    background: #fff7ed; border: 1px solid #f6cf9a; border-left: 4px solid var(--minor);
+    border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; font-size: 14px;
+  }
+  .callout b { color: #a15c00; }
+
+  .scorecards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 26px; }
+  .score {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 18px; text-align: center;
+  }
+  .score .num { font-size: 30px; font-weight: 700; line-height: 1; }
+  .score .lbl { font-size: 12.5px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .score.c .num { color: var(--consistent); }
+  .score.m .num { color: var(--minor); }
+  .score.i .num { color: var(--inconsistent); }
+  .score.n .num { color: var(--na); }
+
+  section {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 26px 30px; margin-bottom: 22px;
+  }
+  h2 { font-size: 19px; margin: 0 0 16px; padding-bottom: 10px; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 15px; margin: 22px 0 8px; color: var(--accent); }
+  p { margin: 0 0 12px; }
+  ol, ul { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  code {
+    background: var(--code-bg); padding: 1.5px 5px; border-radius: 4px;
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; color: #b3121a;
+    word-break: break-word;
+  }
+  .sev { font-weight: 600; }
+  .sev.hi { color: var(--inconsistent); }
+  .std-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+  .std-table th, .std-table td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; }
+  .std-table th { background: #fafbfc; font-size: 11.5px; text-transform: uppercase; color: var(--muted); }
+
+  table.findings { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.findings th, table.findings td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.findings th { background: #fafbfc; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); }
+  td.file code { background: transparent; color: var(--ink); padding: 0; font-size: 12px; }
+  table.findings tr:hover td { background: #fbfcfd; }
+
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+  .pill.consistent { background: #e3f3ec; color: var(--consistent); }
+  .pill.minor { background: #fcefdd; color: var(--minor); }
+  .pill.inconsistent { background: #fbe3e4; color: var(--inconsistent); }
+  .pill.na { background: #eef0f2; color: var(--na); }
+
+  .filterbar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filterbar button {
+    border: 1px solid var(--line); background: #fff; border-radius: 20px;
+    padding: 5px 14px; font-size: 12.5px; cursor: pointer; color: var(--ink);
+    font-family: inherit; transition: all .12s;
+  }
+  .filterbar button:hover { border-color: var(--accent); }
+  .filterbar button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .track { border-left: 4px solid var(--line); padding: 4px 0 4px 16px; margin-bottom: 18px; }
+  .track.a { border-color: var(--inconsistent); }
+  .track.b { border-color: var(--consistent); }
+  .track h3 { margin-top: 0; color: var(--ink); }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+  @media (max-width: 720px) {
+    .scorecards { grid-template-columns: repeat(2, 1fr); }
+    .wrap { padding: 20px 12px 50px; }
+    section { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="badge">STANDARD: BEM</div>
+    <h1>CSS Audit Report</h1>
+    <div>Adobe CaaS — Consonant Card Collection</div>
+    <div class="meta">
+      <span><b>Scope:</b> Authored LESS under <code style="color:#fff;background:rgba(255,255,255,0.18)">less/</code> — 68 files</span>
+      <span><b>Date:</b> 2026-07-28</span>
+      <span><b>Standard:</b> BEM (kebab blocks, <code style="color:#fff;background:rgba(255,255,255,0.18)">__</code> elements, kebab <code style="color:#fff;background:rgba(255,255,255,0.18)">--</code> modifiers)</span>
+    </div>
+  </header>
+
+  <div class="callout">
+    <b>Convention mismatch, not a bug list.</b> The codebase deliberately uses a <b>SUIT-CSS-style</b> convention (<code>consonant-PascalCase</code> blocks, single-hyphen <code>&amp;-element</code> descendants, <code>is-</code> state classes). Measured against strict BEM, that is a wholesale deviation on every axis — so nearly every scored file is flagged <b>Inconsistent</b> even when otherwise clean. A real BEM migration would rename almost every selector <em>and</em> the AEM/DEXTER templates that consume them. If BEM isn't a hard requirement, re-run against <b>SUIT CSS</b> or the <b>existing convention</b> for an actionable punch-list.
+  </div>
+
+  <div class="scorecards">
+    <div class="score c"><div class="num">0</div><div class="lbl">Consistent</div></div>
+    <div class="score m"><div class="num">2</div><div class="lbl">Minor issues</div></div>
+    <div class="score i"><div class="num">58</div><div class="lbl">Inconsistent</div></div>
+    <div class="score n"><div class="num">8</div><div class="lbl">N/A</div></div>
+  </div>
+
+  <section>
+    <h2>BEM rules being measured</h2>
+    <table class="std-table">
+      <thead><tr><th>Part</th><th>BEM convention</th><th>What the repo does instead</th></tr></thead>
+      <tbody>
+        <tr><td>Block</td><td><code>kebab-case</code> (<code>.filters-info</code>)</td><td><code>consonant-PascalCase</code> (<code>.consonant-FiltersInfo</code>)</td></tr>
+        <tr><td>Element</td><td><code>block__element</code> (double underscore)</td><td>single hyphen (<code>&amp;-btnSelected</code>)</td></tr>
+        <tr><td>Modifier</td><td><code>block--modifier</code>, kebab-case</td><td><code>--</code> separator but camelCase (<code>--withFilters</code>)</td></tr>
+        <tr><td>State</td><td>expressed as a modifier</td><td><code>is-</code> classes (<code>.is-active</code>) — a SUIT concept, not BEM</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>1. Summary</h2>
+    <p>Measured against strict <b>BEM</b>, <b>essentially the entire authored codebase is non-compliant on naming</b> — but not because of scattered mistakes. The project deliberately uses a <b>SUIT-CSS-style convention</b> that is internally consistent yet structurally different from BEM on every point. So virtually every component, card, infobit, and filter file is flagged <b>Inconsistent</b> on the naming axis, even where it is otherwise clean.</p>
+    <p>Ironically, a few of the <em>presentational</em> one-offs the codebase would normally frown on — <code>.filters-category--icon</code> (categories.less), <code>.modern-carousel--light</code> (cards-carousel.less) — are among the closest things to valid BEM in the repo, because they pair a kebab block with a <code>--</code> modifier.</p>
+    <p><b>Bottom line:</b> this is not a BEM codebase. If BEM is the target, the finding is a wholesale convention mismatch — adopting it would mean renaming nearly every selector across the bundle and its consuming AEM/DEXTER markup.</p>
+  </section>
+
+  <section>
+    <h2>2. Systemic &amp; Recurring Issues</h2>
+    <ol>
+      <li><b><span class="sev hi">Single-hyphen elements instead of <code>__</code> (repo-wide).</span></b> Every consonant component uses <code>&amp;-element</code> (<code>.consonant-Card-inner</code>, <code>.consonant-LeftFilter-itemsItemName</code>). BEM requires <code>card__inner</code>. This alone makes ~50 files non-compliant.</li>
+      <li><b>PascalCase (prefixed) blocks instead of kebab-case.</b> <code>.consonant-Card</code>, <code>.consonant-FiltersInfo</code>, <code>.consonant-BtnInfobit</code>… BEM wants <code>.card</code>, <code>.filters-info</code>.</li>
+      <li><b><code>is-</code> state classes are not BEM.</b> <code>.is-active</code>, <code>.is-opened</code>, <code>.is-selected</code>, <code>.is-loading</code>, <code>.is-disabled</code> throughout. BEM expresses state as a modifier.</li>
+      <li><b>camelCase modifiers instead of kebab-case.</b> <code>--withFilters</code>, <code>--overBg</code>, <code>--negMargin</code>, <code>--autoWidth</code>, <code>--2up</code> — separator right, casing wrong.</li>
+      <li><b>Variant classes chained onto a block instead of modifiers.</b> <code>.consonant-Card.three-fourths</code>, <code>.one-half</code>, <code>.full-card</code>, <code>.news-card</code>, <code>.half-height</code>. BEM would use <code>card--three-fourths</code>.</li>
+      <li><b>Hardcoded hex/rgba colors instead of tokens</b> (standard, not naming): <code>cards-carousel</code> <code>.modern-carousel</code> (~15), <code>categories</code> (~14), <code>blade</code>, <code>editorial</code>, <code>button</code>, <code>flex</code> (<code>#333</code>/<code>#666</code>), <code>pagination</code>/<code>select</code> (<code>#999</code>/<code>#ccc</code>/<code>#aaa</code>), <code>accessibility</code> (<code>#dedede</code>), <code>filters/left/panel</code> (<code>#eaeaea</code>/<code>#fff</code>).</li>
+      <li><b>Two competing color-variable systems.</b> <code>cards/icon.less</code> and <code>cards/horizontal.less</code> use the static <code>@consonantLightGrey*</code>/<code>@consonantDarkGrey*</code> palette instead of themeable <code>@consonantGray*</code> → ignore theming.</li>
+      <li><b>Raw-px / arithmetic media queries</b> bypass named queries: <code>cards-carousel</code> (<code>599px + 1</code>), <code>cards-grid</code> (320/600), <code>categories</code> (480), <code>blade</code> (1200/600). <code>utils/hide.less</code> references two <b>undefined</b> vars (<code>@for-tablet-portrait-up</code>, <code>@for-desktop-up</code>).</li>
+      <li><b>Duplicated helpers &amp; dead code.</b> <code>.no-font</code>/<code>.margin-auto</code>/<code>.full-width</code>/<code>.hide-all</code> defined in both <code>utils/</code>/<code>references/</code> and <code>components/consonant/utils.less</code>; <code>.hide-all</code> 3× in <code>hide.less</code>; dead blocks in <code>lineclamp.less:15-37</code>, <code>utils.less</code>, <code>filters/left/item.less:476</code>.</li>
+      <li><b>Genuine selector bugs (standard-agnostic).</b> <code>&amp;-element</code> misuse in variant scopes (<code>three-fourth:90</code>, <code>text:87</code>, <code>double-wide:136,140,150,154</code>, <code>editorial:22-26</code>); bare <code>:only-child</code> (<code>half-height:92,143</code>, <code>double-wide:51,87</code>); missing comma in <code>search.less:57-59</code>; typos <code>--83PercentContainier</code>, <code>&amp;-selctedItemsQty</code>; mis-scoped leaks in <code>news:26-51</code>, <code>three-fourth:241</code>.</li>
+      <li><b>The only near-BEM naming is accidental:</b> <code>categories.less</code> (<code>.filters-category--icon</code>) and <code>cards-carousel</code> (<code>.modern-carousel--light</code>) pair a kebab block with a <code>--</code> modifier — the closest the repo comes to BEM, though both are riddled with hardcoded colors.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>3. Per-File Findings</h2>
+    <p style="font-size:13px;color:var(--muted)">Under BEM, "Inconsistent" is the dominant verdict because the whole codebase uses SUIT-CSS-style naming. Notes record the BEM naming gap plus any additional standards/formatting issues.</p>
+    <div class="filterbar" id="filters">
+      <button data-f="all" class="active">All (68)</button>
+      <button data-f="minor">Minor (2)</button>
+      <button data-f="inconsistent">Inconsistent (58)</button>
+      <button data-f="na">N/A (8)</button>
+    </div>
+    <table class="findings" id="findings">
+      <thead><tr><th style="width:38%">File</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr data-s="na"><td class="file"><code>less/app.less</code></td><td><span class="pill na">N/A</span></td><td>Single <code>@import</code>.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/main.less</code></td><td><span class="pill na">N/A</span></td><td>Import manifest only.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/variables.less</code></td><td><span class="pill na">N/A</span></td><td>Variable definitions only.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/theme.less</code></td><td><span class="pill na">N/A</span></td><td>Theme-generation mixins; emits SUIT-style <code>.consonant-u-theme*</code> utilities but is a generator/token file.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/media-queries.less</code></td><td><span class="pill na">N/A</span></td><td>Named-query definitions.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/animations.less</code></td><td><span class="pill na">N/A</span></td><td><code>@keyframes</code> only.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/utils/lineclamp.less</code></td><td><span class="pill na">N/A</span></td><td>Single <code>.lineclamp()</code> mixin; dead commented block L15-37.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/modal.less</code></td><td><span class="pill na">N/A</span></td><td>Vendor <code>.dexter-*</code> (<code>stylelint-disable</code>); single-<code>_</code> (<code>Modal_overlay</code>) — neither BEM <code>__</code> nor repo style. Generated, out of scope.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/utils/hide.less</code></td><td><span class="pill minor">Minor</span></td><td>Blocks are kebab (<code>.hide-all</code>, <code>.visually-hidden</code>) — BEM-shape-valid; but <code>.hide-all</code> defined 3× and two <b>undefined</b> <code>@for-*</code> breakpoint vars.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/utils/misc.less</code></td><td><span class="pill minor">Minor</span></td><td>Kebab blocks <code>.full-width</code>/<code>.position-absolute-0</code> (BEM-shape-ok); <code>.fullViewportWidth()</code> mixin camelCase; no elements/modifiers to judge.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/references/main.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Presentational block names <code>.left/.center/.right/.top/.bottom</code>; malformed <code>outline: thin dotted #cdcdcd 2px</code> (L31); hardcoded <code>#cdcdcd</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/references/flex.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Presentational kebab blocks <code>.flex/.row/.column</code>; camelCase blocks <code>.sizeOnAxis</code> violate kebab; no <code>__</code> elements; magic <code>33.333%</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/references/type.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Presentational <code>.bold/.italic/.sans/.serif</code>; invalid <code>font-weight: light</code> (L27); font-family stack duplicated.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/utils/margin.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>.NoMargin</code>/<code>.NoMarginTop</code> PascalCase (not kebab; <code>Top</code> should be <code>__top</code>); inconsistent <code>!important</code>; mixed with kebab <code>.no-margin</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/utils.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Consonant mixins + unprefixed kebab helpers duplicating <code>utils/</code>; hardcoded <code>rgba(0,0,0,0.16/0.35)</code>; dead commented code; no <code>__</code> elements.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/scaffolding.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>.consonant-Wrapper</code> PascalCase block; <code>&amp;-btn</code> element single-hyphen not <code>__</code>. Otherwise clean.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/wrapper.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming; <code>.is-loading</code> state; camelCase/presentational modifiers <code>--1200MaxWidth</code>/<code>--83PercentContainier</code> (typo); font-family literal repeated.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/rtl.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT-style selectors; <code>[dir=rtl]</code> scoping fine; typo <code>&amp;-selctedItemsQty</code> (L170); repeated full selectors.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/accessibility.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Single-hyphen elements; presentational <code>.lightText</code>; hardcoded <code>#dedede !important</code> (L19).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/localeOverrides.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Kebab variant classes <code>.one-half</code>/<code>.half-height</code> (should be BEM modifiers); magic <code>font-size:15px</code>, <code>line-height:1.275rem</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/card.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-Card</code> PascalCase; <code>&amp;-inner/&amp;-title</code> single-hyphen (not <code>__</code>). Malformed <code>border:2px</code> (L83).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/one-half.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Chained variant <code>.one-half</code> (not modifier); <code>&amp;--2up..5up</code> camelCase modifiers; single-hyphen elements. Otherwise clean.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/three-fourth.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + broken <code>&amp;-title</code> under <code>.three-fourths</code> (L90); magic 384/344px; mis-scoped <code>&amp;--5up</code> header (L241); badge block duplicated.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/full.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming; scrim <code>rgba(0,0,0,…)</code> acceptable; <code>&amp; img</code> (L156).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/half-height.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + hardcoded <code>#fff</code> (L25); bare <code>:only-child</code> bug (L92,143); magic <code>140px</code>/<code>40px</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/double-wide.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + broken <code>&amp;-img</code>/<code>&amp;-content</code> under <code>.double-wide</code> (L136,140,150,154); bare <code>:only-child</code> (L51,87).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/product-card.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming (<code>.product</code> chained variant); nit <code>min-height:222px</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/text.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + broken <code>&amp;-title</code> under <code>.text-card</code> (L87).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/icon.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + non-themeable <code>@consonantLightGrey*</code>/<code>@consonantDarkGrey*</code>; omits <code>.no-font</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/news.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + title/label nested under grid not <code>.news-card</code> (L26-51) → leaks to all cards.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/blade.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + <code>//</code> comments; hardcoded hex; raw-px breakpoints; presentational <code>.reverse/.light-text/.transparent</code>; <code>!important</code> spam.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/horizontal.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + non-themeable <code>@consonantDarkGrey800</code> (L8,41); redundant <code>font-size:18px</code>+<code>.font()</code>; magic widths.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/editorial.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + broken self-nesting selector (L22-26); hardcoded font sizes; <code>.consonant-editorial--open</code> off-block.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/blog.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming (<code>.blog-card</code> variant); nit <code>font-weight:500</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/button.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>.consonant-ButtonCard-link</code> (single-hyphen); hardcoded <code>#dedede</code>/<code>#000</code>/<code>rgba(0,0,0,0.5)</code>; magic px.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/flex.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + presentational <code>.text-left/-center/-right</code>; non-prefixed <code>.product-info*</code>; <code>#333</code>/<code>#666</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/link-blocker/link-blocker.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>&amp;-LinkBlocker</code> single-hyphen element under <code>.consonant</code>. Otherwise clean.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards/card-footer/card-footer.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT model file — <code>&amp;-row/&amp;-cell</code> elements (not <code>__</code>), <code>&amp;--divider/--left/--center/--right</code> camelCase modifiers. Otherwise exemplary.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/button.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-BtnInfobit</code> + <code>&amp;-ico</code>, <code>&amp;--cta</code>. Colors via vars.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/price.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-PriceInfobit</code> + <code>&amp;-price/&amp;-term</code>. Clean but SUIT.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/icon-with-text.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming; computed <code>1rem * 2</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/link-with-icon.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming; block <code>LinkWithIco</code> vs var <code>LinkWithIcon</code> mismatch.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/rating.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming (<code>&amp;--negMargin</code>, <code>&amp;-stars</code>).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/bookmark.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + <code>.is-active</code>/<code>.is-disabled</code> states (non-BEM).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/date.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-DateIntervalInfobit</code>; single-block SUIT.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/progress.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming; nit <code>letter-spacing:0.14px</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/text.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-TextInfobit</code>; SUIT.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/icon.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-IconInfobit</code>; <code>&amp; + &amp;</code> sibling nesting; SUIT.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/infobits/link.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-LinkInfobit</code>; SUIT; complex <code>:not()</code> selector.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/filters/left/panel.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-LeftFilters</code> + <code>&amp;-x</code>, <code>.is-opened</code> state; hardcoded <code>#eaeaea</code>/<code>#fff</code> (L69,71); <code>z-index:10000</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/filters/left/item.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + <code>//</code> comments; empty <code>--category</code> placeholders; raw <code>&amp;-categoryIcon</code> font; <code>!important</code> L281; dead comment L476.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/filters/left/chosen-item.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-ChosenFilter</code>; <code>:before</code>/<code>:after</code>; SUIT.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/filters/top/panel.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-TopFilters</code> + <code>&amp;--withLightText</code>; literal <code>rgba(255,255,255,1/0)</code> (L131-132).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/filters/top/item.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + <code>rgba(80,80,80,0.101)</code> (L485); <code>//</code> comments; empty <code>--category</code> placeholders; <code>!important</code> L511.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards-carousel.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT <code>.consonant-*</code> + presentational <code>.modern-carousel</code>/<code>.modern-carousel--light</code> (<code>--light</code> coincidentally BEM-shaped); ~15 hardcoded hex; raw/arithmetic breakpoints; duplicated inline SVGs.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/cards-grid.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-CardsGrid</code> + raw-px <code>@media (max-width:320px/600px)</code>; presentational <code>.card-hover-grow</code>/<code>.one-half</code>; <code>!important</code>; stale doc comment.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/bookmarks.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-Bookmarks</code> + <code>&amp;-itemBadge</code>, <code>.is-selected</code> state. Otherwise exemplary.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/categories.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Mixed: <code>.filters-category--icon</code>/<code>.filter-group-title</code> near-BEM (kebab + <code>--</code>), but <code>.Categories</code> PascalCase deviates; "should be moved" TODO; ~14 hardcoded colors; raw-px <code>480px</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/consonant-search-result.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>&amp;-SearchResult</code> element; var-driven; SUIT.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/filters-info.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-FiltersInfo</code> + <code>&amp;-btnSelected</code>, <code>&amp;--withLightText</code>. SUIT exemplar.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/load-more.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-LoadMore</code> + <code>&amp;--overBg &amp;-btn</code>. SUIT.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/loader.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-Loader</code> + <code>&amp;--absolute/--medium/--big</code>. SUIT.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/no-results-view.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-NoResultsView</code> + <code>&amp;--withLightText</code>; nit "modificators" typo.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/pagination.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + <code>.is-active</code> states, <code>&amp;.lightText</code> presentational; <code>#999 !important</code> (L91).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/search.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-Search</code> + <code>&amp;-inputWrapper</code>; likely bug: <code>transition</code> list missing comma (L57-59).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/search-ico.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-SearchIco</code>; <code>fade()</code> on var. SUIT.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/select.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>SUIT naming + <code>.is-active/.is-selected</code> states; <code>#ccc</code>/<code>#aaa !important</code> (L104-105); presentational <code>&amp;.sort-by-Select</code>; magic <code>13px</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/…/tooltip.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>consonant-Tooltip</code>; <code>[data-tooltip-wrapper]</code> attribute scope; nit <code>left:-72px</code>.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>4. Recommendations</h2>
+    <p>Because the audit standard (BEM) and the codebase convention (SUIT-CSS-style) fundamentally disagree, recommendations split into two tracks.</p>
+
+    <div class="track a">
+      <h3>Track A — Decision first (most impactful)</h3>
+      <p><b>Confirm the intended standard.</b> The codebase is coherently SUIT-CSS-style and shipped into AEM/DEXTER markup that references these exact class names. A true BEM migration (<code>.consonant-Card-inner</code> → <code>.card__inner</code>, <code>.is-active</code> → <code>--active</code>, etc.) would touch nearly every selector <em>and</em> every consuming template — a large, breaking, cross-repo effort. If BEM is genuinely required, scope it as a dedicated migration with a class-name mapping and AEM-author coordination; do not attempt it piecemeal. If not, re-run this audit against <b>SUIT CSS</b> or the <b>existing convention</b> for an actionable punch-list.</p>
+    </div>
+
+    <div class="track b">
+      <h3>Track B — Standard-agnostic fixes (worth doing regardless)</h3>
+      <ol>
+        <li><b>Correctness (broken/dead rules):</b> fix <code>&amp;-element</code>-in-variant selectors (<code>three-fourth:90</code>, <code>text:87</code>, <code>double-wide:136,140,150,154</code>, <code>editorial:22-26</code>); bare <code>:only-child</code> (<code>half-height:92,143</code>, <code>double-wide:51,87</code>); missing comma in <code>search.less:57-59</code>; re-scope <code>news:26-51</code> and <code>three-fourth:241</code>; typos <code>--83PercentContainier</code>, <code>rtl.less:170</code>; undefined <code>@for-*</code> vars in <code>hide.less</code>; invalid <code>font-weight:light</code>, outline shorthand, <code>border:2px</code>.</li>
+        <li><b>Theming integrity:</b> move <code>icon.less</code> and <code>horizontal.less</code> onto themeable <code>@consonantGray*</code>; replace hardcoded hex/rgba in <code>cards-carousel</code>, <code>categories</code>, <code>blade</code>, <code>editorial</code>, <code>button</code>, <code>flex</code>, <code>filters/*</code>, <code>pagination</code>, <code>select</code>, <code>accessibility</code> with tokens.</li>
+        <li><b>Breakpoints:</b> replace raw-px/arithmetic queries in <code>cards-carousel</code>, <code>cards-grid</code>, <code>categories</code>, <code>blade</code> with named <code>@consonant-*-up</code> queries.</li>
+        <li><b>Hygiene:</b> de-duplicate helpers across <code>utils/</code>/<code>references/</code>/<code>components/consonant/utils.less</code>; remove dead commented blocks (<code>lineclamp:15-37</code>, <code>utils.less</code>, <code>filters/left/item:476</code>); resolve the <code>categories.less</code> "should be moved" TODO; exclude vendor <code>modal.less</code> from future audits.</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer>Generated by /css-audit · Standard: BEM · Adobe CaaS · 2026-07-28</footer>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('#filters button');
+  const rows = document.querySelectorAll('#findings tbody tr');
+  buttons.forEach(btn => btn.addEventListener('click', () => {
+    buttons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.f;
+    rows.forEach(r => { r.style.display = (f === 'all' || r.dataset.s === f) ? '' : 'none'; });
+  }));
+</script>
+</body>
+</html>

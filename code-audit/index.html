@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit Dashboard — Adobe CaaS</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --ink: #1f2328;
+    --muted: #6a737d;
+    --line: #e4e7eb;
+    --accent: #1473e6;
+    --consistent: #268e6c;
+    --minor: #da7b11;
+    --inconsistent: #d7373f;
+    --na: #8e8e8e;
+    --code-bg: #f2f4f6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 40px 24px 80px; }
+  header.masthead {
+    background: linear-gradient(135deg, #0d66d0, #1473e6);
+    color: #fff;
+    border-radius: 14px;
+    padding: 34px 36px;
+    margin-bottom: 26px;
+    box-shadow: 0 6px 24px rgba(20,115,230,0.25);
+  }
+  header.masthead h1 { margin: 0 0 6px; font-size: 27px; letter-spacing: -0.3px; }
+  header.masthead .meta { font-size: 13.5px; opacity: 0.92; display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 12px; }
+  header.masthead .meta b { font-weight: 600; }
+
+  code {
+    background: var(--code-bg); padding: 1.5px 5px; border-radius: 4px;
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; color: #b3121a;
+  }
+  section {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 24px 28px; margin-bottom: 22px;
+  }
+  h2 { font-size: 18px; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid var(--line); }
+  p { margin: 0 0 12px; }
+
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .report {
+    display: block; text-decoration: none; color: inherit;
+    border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px;
+    background: var(--card); transition: box-shadow .14s, transform .14s, border-color .14s;
+  }
+  .report:hover { box-shadow: 0 8px 22px rgba(0,0,0,0.08); transform: translateY(-2px); border-color: var(--accent); }
+  .report .tag {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; color: #fff;
+  }
+  .report.suit .tag { background: #268e6c; }
+  .report.bem .tag { background: #d7373f; }
+  .report.airbnb .tag { background: #1473e6; }
+  .report h3 { margin: 0 0 6px; font-size: 17px; }
+  .report .desc { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+
+  .mini { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .chip { font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+  .chip.c { background: #e3f3ec; color: var(--consistent); }
+  .chip.m { background: #fcefdd; color: var(--minor); }
+  .chip.i { background: #fbe3e4; color: var(--inconsistent); }
+  .chip.n { background: #eef0f2; color: var(--na); }
+
+  .links { display: flex; gap: 10px; }
+  .links a {
+    flex: 1; text-align: center; text-decoration: none; font-size: 13px; font-weight: 600;
+    padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); color: var(--accent);
+    transition: background .12s;
+  }
+  .links a:hover { background: #f0f6ff; }
+
+  .bar { display: flex; height: 26px; border-radius: 6px; overflow: hidden; margin: 4px 0 10px; border: 1px solid var(--line); }
+  .bar span { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; }
+  .bar .c { background: var(--consistent); }
+  .bar .m { background: var(--minor); }
+  .bar .i { background: var(--inconsistent); }
+  .bar .n { background: var(--na); }
+  .legend { font-size: 12px; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; }
+  .legend b { color: var(--ink); }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
+
+  table.files { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.files th, table.files td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  table.files th { background: #fafbfc; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); }
+  table.files a { color: var(--accent); text-decoration: none; }
+  table.files a:hover { text-decoration: underline; }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+  @media (max-width: 720px) {
+    .cards { grid-template-columns: 1fr; }
+    .wrap { padding: 20px 12px 50px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <h1>Audit Dashboard</h1>
+    <div>Adobe CaaS — Consonant Card Collection</div>
+    <div class="meta">
+      <span><b>Scope:</b> 68 LESS files under <code style="color:#fff;background:rgba(255,255,255,0.18)">less/</code> · 108 JS/JSX files under <code style="color:#fff;background:rgba(255,255,255,0.18)">react/src/js/</code></span>
+      <span><b>Date:</b> 2026-07-29</span>
+      <span><b>Runs:</b> 3 audits (2 CSS + 1 JS)</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Overview</h2>
+    <p><b>JavaScript.</b> The 108 authored <code>.js</code>/<code>.jsx</code> files under <code>react/src/js/</code> were audited against the project's configured <b>Airbnb/ESLint</b> ruleset (honoring the <code>Consonant/**</code> override). The React tree is disciplined and mostly clean; the real issues concentrate in the entry/Modal utilities (blanket <code>eslint-disable</code>, dead files, commented-out code) plus a repeated <code>key={cuid()}</code> reconciliation anti-pattern and a few genuine latent bugs.</p>
+    <p><b>CSS.</b> The same 68 authored LESS files were audited against two naming standards. The result is a study in how much the verdict depends on the yardstick: the codebase follows a coherent <b>SUIT-CSS-style</b> convention (namespaced <code>consonant-PascalCase</code> components, single-hyphen <code>&amp;-element</code> descendants, <code>--modifier</code> modifiers, <code>.is-</code> states), so it scores well against SUIT and fails wholesale against BEM. The standard-agnostic selector bugs are identical across both runs and are the ones worth acting on first.</p>
+  </section>
+
+  <section>
+    <h2>JavaScript Reports</h2>
+    <div class="cards">
+
+      <a class="report airbnb" href="js-report.html">
+        <span class="tag">AIRBNB / ESLINT</span>
+        <h3>JS Audit →</h3>
+        <div class="desc">108 authored <code>.js</code>/<code>.jsx</code> files under <code>react/src/js/</code>, measured against the project's configured Airbnb ruleset (Consonant override honored).</div>
+        <div class="mini">
+          <span class="chip c">56 Consistent</span>
+          <span class="chip m">26 Minor</span>
+          <span class="chip i">9 Inconsistent</span>
+          <span class="chip n">17 N/A</span>
+        </div>
+        <div class="bar">
+          <span class="c" style="width:51.9%">56</span>
+          <span class="m" style="width:24.1%">26</span>
+          <span class="i" style="width:8.3%">9</span>
+          <span class="n" style="width:15.7%">17</span>
+        </div>
+        <div class="links">
+          <a href="js-report.html">HTML</a>
+          <a href="js-report.md">Markdown</a>
+        </div>
+      </a>
+
+    </div>
+    <p style="font-size:12.5px;color:var(--muted);margin-top:16px;margin-bottom:0">
+      <span class="dot" style="background:var(--consistent)"></span><b>Consistent</b> ·
+      <span class="dot" style="background:var(--minor)"></span><b>Minor issues</b> ·
+      <span class="dot" style="background:var(--inconsistent)"></span><b>Inconsistent</b> ·
+      <span class="dot" style="background:var(--na)"></span><b>N/A</b> (proptype shapes / constants / test fixtures / vendored)
+    </p>
+  </section>
+
+  <section>
+    <h2>CSS Reports</h2>
+    <div class="cards">
+
+      <a class="report suit" href="css-report-suit.html">
+        <span class="tag">SUIT CSS</span>
+        <h3>SUIT CSS Audit →</h3>
+        <div class="desc">The standard the project effectively already follows. Targeted punch-list, not a migration.</div>
+        <div class="mini">
+          <span class="chip c">22 Consistent</span>
+          <span class="chip m">19 Minor</span>
+          <span class="chip i">19 Inconsistent</span>
+          <span class="chip n">8 N/A</span>
+        </div>
+        <div class="bar">
+          <span class="c" style="width:32.4%">22</span>
+          <span class="m" style="width:27.9%">19</span>
+          <span class="i" style="width:27.9%">19</span>
+          <span class="n" style="width:11.8%">8</span>
+        </div>
+        <div class="links">
+          <a href="css-report-suit.html">HTML</a>
+          <a href="css-report-suit.md">Markdown</a>
+        </div>
+      </a>
+
+      <a class="report bem" href="css-report-bem.html">
+        <span class="tag">BEM</span>
+        <h3>BEM Audit →</h3>
+        <div class="desc">A wholesale convention mismatch — the repo is not BEM. Useful as a contrast, not a to-do list.</div>
+        <div class="mini">
+          <span class="chip c">0 Consistent</span>
+          <span class="chip m">2 Minor</span>
+          <span class="chip i">58 Inconsistent</span>
+          <span class="chip n">8 N/A</span>
+        </div>
+        <div class="bar">
+          <span class="m" style="width:2.9%">2</span>
+          <span class="i" style="width:85.3%">58</span>
+          <span class="n" style="width:11.8%">8</span>
+        </div>
+        <div class="links">
+          <a href="css-report-bem.html">HTML</a>
+          <a href="css-report-bem.md">Markdown</a>
+        </div>
+      </a>
+
+    </div>
+    <p style="font-size:12.5px;color:var(--muted);margin-top:16px;margin-bottom:0">
+      <span class="dot" style="background:var(--consistent)"></span><b>Consistent</b> ·
+      <span class="dot" style="background:var(--minor)"></span><b>Minor issues</b> ·
+      <span class="dot" style="background:var(--inconsistent)"></span><b>Inconsistent</b> ·
+      <span class="dot" style="background:var(--na)"></span><b>N/A</b> (variables / mixins / keyframes / vendor)
+    </p>
+  </section>
+
+  <section>
+    <h2>All files</h2>
+    <table class="files">
+      <thead><tr><th>Report</th><th>Domain</th><th>Standard / Lens</th><th>Format</th></tr></thead>
+      <tbody>
+        <tr><td><a href="css-report-suit.html">css-report-suit.html</a></td><td>CSS</td><td>SUIT CSS</td><td>HTML</td></tr>
+        <tr><td><a href="css-report-suit.md">css-report-suit.md</a></td><td>CSS</td><td>SUIT CSS</td><td>Markdown</td></tr>
+        <tr><td><a href="css-report-bem.html">css-report-bem.html</a></td><td>CSS</td><td>BEM</td><td>HTML</td></tr>
+        <tr><td><a href="css-report-bem.md">css-report-bem.md</a></td><td>CSS</td><td>BEM</td><td>Markdown</td></tr>
+        <tr><td><a href="css-report.html">css-report.html</a></td><td>CSS</td><td>Latest run (SUIT)</td><td>HTML</td></tr>
+        <tr><td><a href="css-report.md">css-report.md</a></td><td>CSS</td><td>Latest run (SUIT)</td><td>Markdown</td></tr>
+        <tr><td><a href="js-report.html">js-report.html</a></td><td>JavaScript</td><td>Airbnb / ESLint</td><td>HTML</td></tr>
+        <tr><td><a href="js-report.md">js-report.md</a></td><td>JavaScript</td><td>Airbnb / ESLint</td><td>Markdown</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>Generated by /css-audit &amp; /js-audit · Adobe CaaS · 2026-07-29</footer>
+</div>
+</body>
+</html>

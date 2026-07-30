@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JS Audit Report — Adobe CaaS</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #fff; --ink: #1f2328; --muted: #6a737d; --line: #e4e7eb;
+    --accent: #1473e6; --consistent: #268e6c; --minor: #da7b11; --inconsistent: #d7373f; --na: #8e8e8e;
+    --code-bg: #f2f4f6;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); background: var(--bg); line-height: 1.55; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; }
+  header.masthead { background: linear-gradient(135deg, #0d66d0, #1473e6); color: #fff; border-radius: 14px; padding: 32px 36px; margin-bottom: 26px; box-shadow: 0 6px 24px rgba(20,115,230,0.25); }
+  header.masthead h1 { margin: 0 0 6px; font-size: 26px; letter-spacing: -0.3px; }
+  header.masthead .badge { display: inline-block; background: rgba(255,255,255,0.22); color: #fff; font-size: 12px; font-weight: 700; padding: 3px 12px; border-radius: 20px; letter-spacing: 0.5px; margin-bottom: 10px; }
+  header.masthead .meta { font-size: 13.5px; opacity: 0.94; display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 12px; }
+  header.masthead .meta b { font-weight: 600; }
+  code { background: var(--code-bg); padding: 1.5px 5px; border-radius: 4px; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; color: #b3121a; word-break: break-word; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 26px 30px; margin-bottom: 22px; }
+  h2 { font-size: 19px; margin: 0 0 16px; padding-bottom: 10px; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 15px; margin: 22px 0 8px; color: var(--accent); }
+  p { margin: 0 0 12px; }
+  ol, ul { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  .sev { font-weight: 600; }
+  .sev.hi { color: var(--inconsistent); }
+  .scorecards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 26px; }
+  .score { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; text-align: center; }
+  .score .num { font-size: 30px; font-weight: 700; line-height: 1; }
+  .score .lbl { font-size: 12.5px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .score.c .num { color: var(--consistent); } .score.m .num { color: var(--minor); } .score.i .num { color: var(--inconsistent); } .score.n .num { color: var(--na); }
+  table.findings { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.findings th, table.findings td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.findings th { background: #fafbfc; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); }
+  td.file code { background: transparent; color: var(--ink); padding: 0; font-size: 11.5px; }
+  table.findings tr:hover td { background: #fbfcfd; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .pill.consistent { background: #e3f3ec; color: var(--consistent); }
+  .pill.minor { background: #fcefdd; color: var(--minor); }
+  .pill.inconsistent { background: #fbe3e4; color: var(--inconsistent); }
+  .pill.na { background: #eef0f2; color: var(--na); }
+  .filterbar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filterbar button { border: 1px solid var(--line); background: #fff; border-radius: 20px; padding: 5px 14px; font-size: 12.5px; cursor: pointer; color: var(--ink); font-family: inherit; transition: all .12s; }
+  .filterbar button:hover { border-color: var(--accent); }
+  .filterbar button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .prio { border-left: 4px solid var(--line); padding: 4px 0 4px 16px; margin-bottom: 18px; }
+  .prio.p1 { border-color: var(--inconsistent); } .prio.p2 { border-color: var(--accent); } .prio.p3 { border-color: var(--minor); } .prio.p4 { border-color: var(--consistent); }
+  .prio h3 { margin-top: 0; color: var(--ink); }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+  @media (max-width: 720px) { .scorecards { grid-template-columns: repeat(2, 1fr); } .wrap { padding: 20px 12px 50px; } section { padding: 20px 16px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="badge">LENS: AIRBNB / ESLINT</div>
+    <h1>JS Audit Report</h1>
+    <div>Adobe CaaS — Consonant Card Collection</div>
+    <div class="meta">
+      <span><b>Scope:</b> 108 authored <code style="color:#fff;background:rgba(255,255,255,0.18)">.js</code>/<code style="color:#fff;background:rgba(255,255,255,0.18)">.jsx</code> under <code style="color:#fff;background:rgba(255,255,255,0.18)">react/src/js/</code></span>
+      <span><b>Date:</b> 2026-07-29</span>
+      <span><b>Lens:</b> Airbnb/ESLint (project-configured)</span>
+    </div>
+  </header>
+
+  <div class="scorecards">
+    <div class="score c"><div class="num">56</div><div class="lbl">Consistent</div></div>
+    <div class="score m"><div class="num">26</div><div class="lbl">Minor issues</div></div>
+    <div class="score i"><div class="num">9</div><div class="lbl">Inconsistent</div></div>
+    <div class="score n"><div class="num">17</div><div class="lbl">N/A</div></div>
+  </div>
+
+  <section>
+    <h2>1. Summary</h2>
+    <p>Against the project's <em>configured</em> Airbnb ruleset, the codebase is <b>broadly clean and internally consistent</b> — 56 of 108 files are Consistent, 17 are N/A (PropTypes shapes, constants, contexts, test fixtures, and vendored <code>@dexter/</code> code), and only 9 are Inconsistent. The React component tree is disciplined: every component declares <code>propTypes</code>, <code>defaultProps</code> are paired wherever a prop isn't required, hooks are called unconditionally, and there is essentially no <code>var</code>, no loose <code>==</code>, no unused/duplicate imports, and no array-index keys.</p>
+    <p>The real problems cluster in two areas: (1) <b>entry/Modal utility files that ship blanket <code>/* eslint-disable */</code> headers, empty dead files, and commented-out or debug code</b> (<code>app.jsx</code>, <code>modal.js</code>, <code>Modal/Icon.js</code>, <code>index.js</code>, <code>polyfills.js</code>), and (2) a repeated <b><code>key={cuid()}</code> anti-pattern</b> that mints a fresh React key every render. A handful of genuine latent bugs surfaced from close reading (a mis-typed config path, a double <code>Date.parse</code>, a permanently-dead debounce guard) matter more than any style nit.</p>
+    <p style="font-size:12.5px;color:var(--muted)">The <code>Consonant/**</code> eslint override and global disables (<code>no-console</code>, <code>max-len</code>, <code>no-plusplus</code>, <code>exhaustive-deps</code>, subtree formatting rules) were honored — those are not flagged as violations.</p>
+  </section>
+
+  <section>
+    <h2>2. Systemic &amp; Recurring Issues</h2>
+    <ol>
+      <li><b><span class="sev hi"><code>key={cuid()}</code> defeats React reconciliation.</span></b> A brand-new random key every render → React remounts the whole list each time (losing DOM/focus state, hurting perf). Recurs in <code>Infobit/Group.jsx</code> (13 branches), <code>Helpers/rendering.js</code> (5 sites), and every card that maps a footer (<code>BladeCard</code>, <code>BlogCard</code>, <code>EditorialCard</code>, <code>FlexCard</code>, <code>NewsCard</code>, <code>OneHalf</code>, <code>Product</code>, <code>TextCard</code>). Highest-value fix.</li>
+      <li><b>Blanket <code>/* eslint-disable */</code> on authored, non-trivial files.</b> <code>app.jsx</code>, <code>Modal/modal.js</code> (~377 lines), and <code>Helpers/eventSort.js</code>/<code>Helpers/hooks.js</code> (legacy <code>var</code> code) suppress the entire ruleset rather than the specific rule/line — hiding real issues. Distinct from the transpiled <code>@dexter/</code> artifacts, where it's expected.</li>
+      <li><b>Dead files and commented-out / debug code shipping in source.</b> Empty 0-byte <code>Modal/Icon.js</code> and <code>index.js</code> (neither imported); <code>polyfills.js</code> is ~70 lines fully commented out yet still <code>import</code>ed by <code>app.jsx</code>; <code>app.jsx</code> computes a "Babel 7 Upgrade Verified 🎉" object solely to <code>console.log</code> it; commented-out blocks in <code>Container.jsx</code>, <code>Grid.jsx</code>, <code>eventSort.js</code>, and <code>// here</code> markers in <code>withLinkTransformer.js</code>.</li>
+      <li><b>Latent correctness bugs (not style).</b> <code>JsonProcessor.js:92</code> mis-typed path <code>contentArea.dateTetailText</code> (always <code>''</code>); <code>general.js:569</code> double <code>Date.parse(...)</code> → always <code>NaN</code>, dead branch; <code>Modal/throttle.js</code> re-declares <code>timeout</code> each call so the clear guard is permanently dead; <code>CardFooter.jsx</code> guards on <code>if (new Date(cardDate))</code> which is always truthy; <code>eventSort.js:127</code> returns an array where all other paths return an object.</li>
+      <li><b>In-place mutation of state/config/inputs.</b> <code>Container.jsx</code> mutates prior state in <code>setFilters</code> and the config-derived <code>authoredFilters</code>; <code>Helpers.js</code> sort helpers mutate the caller's array; <code>CardsCarousel.jsx</code> uses module-level mutable <code>let</code> shared across instances.</li>
+      <li><b><code>CardFooter.jsx</code> propTypes/defaultProps lag its prop surface.</b> Validates only <code>footerType</code>'s 5 fields while consuming ~12 props. Related: panels pass props children don't declare (<code>panelHeader</code>→<code>ClearButton</code>; <code>isOpened</code>/<code>onClick</code>/<code>isTopFilter</code>→<code>Group</code>).</li>
+      <li><b>Redundant <code>eslint-disable</code> directives</b> targeting globally-off rules (<code>max-len</code>, <code>no-restricted-syntax</code>, <code>no-plusplus</code>) — dead; <code>eslint --report-unused-disable-directives</code> would surface them.</li>
+      <li><b>Cosmetic drift (low severity).</b> Redundant <code>tabIndex="0"</code> on native buttons; mixed string vs numeric <code>tabIndex</code>; <code>forwardRef</code> without <code>displayName</code> (five filter files); copy-paste JSDoc drift; a few hardcoded English aria strings in an i18n-driven tree.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>3. Per-File Findings</h2>
+    <div class="filterbar" id="filters">
+      <button data-f="all" class="active">All (108)</button>
+      <button data-f="consistent">Consistent (56)</button>
+      <button data-f="minor">Minor (26)</button>
+      <button data-f="inconsistent">Inconsistent (9)</button>
+      <button data-f="na">N/A (17)</button>
+    </div>
+    <table class="findings" id="findings">
+      <thead><tr><th style="width:40%">File</th><th style="width:13%">Status</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr data-s="inconsistent"><td class="file"><code>react/src/js/app.jsx</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Blanket <code>/* eslint-disable */</code> on an entry file; dead Babel-verification <code>console.log</code> block; imports no-op <code>polyfills</code>; reassigns <code>registry</code> param; misspelled export <code>ConsonantCardCollecton</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>react/src/js/index.js</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Empty 0-byte file, never imported. Dead stub.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>react/src/js/polyfills.js</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Entirely commented-out (~70 lines), exports nothing, yet imported by <code>app.jsx</code>. Dead module.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>react/src/js/watch.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean; strict equality, no <code>var</code>. Note: an <code>authorWatch</code> differing from <code>app.jsx</code>'s.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>Consonant/Container/Container.jsx</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Commented-out lines (10, 278); prop mutation (984); in-place state mutation in <code>categoryHandler</code> (1703-1710); mutates <code>authoredFilters</code>; block-form <code>eslint-disable no-unused-vars</code> (202, 212, 1524).</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Grid/Grid.jsx</code></td><td><span class="pill minor">Minor</span></td><td>Commented-out line 90; <code>CARD_STYLES.CUSTOM</code> branch returns element without <code>key</code> (255).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Bookmarks/Bookmarks.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Complete; redundant <code>tabIndex="0"</code> on <code>&lt;button&gt;</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>Consonant/CardsCarousel/CardsCarousel.jsx</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Module-level mutable <code>let cardWidth</code>/<code>cardsShiftedPerClick</code> shared across instances (can go <code>NaN</code>); duplicate rule in disable directive; <code>export default</code> before <code>propTypes</code>.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Cards/Card.jsx</code></td><td><span class="pill minor">Minor</span></td><td><code>useMemo</code> with no dependency array (448); <code>no-mixed-operators</code> (239-241); <code>no-else-return</code> chains.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/CardContent/CardContent.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Complete; <code>dangerouslySetInnerHTML</code> inherent to markdown design.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/CardContext.js</code></td><td><span class="pill consistent">Consistent</span></td><td><code>createContext()</code> with no default.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Cards/CardHeader/CardHeader.jsx</code></td><td><span class="pill minor">Minor</span></td><td>Double default for <code>imageOption</code>; <code>role=""</code> when falsy (invalid ARIA).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>Consonant/Cards/CardFooter/CardFooter.jsx</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>propTypes cover only <code>footerType</code>'s 5 fields — ~12 consumed props unvalidated; always-truthy <code>if (new Date(cardDate))</code> guards (143, 152).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/LinkBlocker/LinkBlocker.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Empty anchor intentional, correctly disabled; complete.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/BladeCard.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Zero-prop context consumer; <code>key={cuid()}</code> (systemic).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/BlogCard.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td><code>key={cuid()}</code> (systemic).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/ButtonCard.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Real anchor + LinkBlocker; clean.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/DoubleWide.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Two intentional LinkBlockers.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/EditorialCard.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td><code>key={cuid()}</code> (systemic).</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Cards/FlexCard.jsx</code></td><td><span class="pill minor">Minor</span></td><td><code>isFlexCard={true}</code> should use shorthand; <code>key={cuid()}</code> (systemic).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/FullCard.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>No issues.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/HalfHeight.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>No issues.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/HorizontalCard.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>No issues.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/IconCard.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>No issues.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/NewsCard.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td><code>key={cuid()}</code> (systemic).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/OneHalf.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td><code>key={cuid()}</code> (systemic).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/Product.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td><code>key={cuid()}</code> (systemic).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/TextCard.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td><code>key={cuid()}</code> (systemic).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Cards/ThreeFourths.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>No issues.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Filters/Left/Panel.jsx</code></td><td><span class="pill minor">Minor</span></td><td>Passes undeclared <code>panelHeader</code> to <code>ClearButton</code>; compound classNames key; <code>forwardRef</code> no <code>displayName</code>.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Filters/Left/Item.jsx</code></td><td><span class="pill minor">Minor</span></td><td>classNames compound key <code>'consonant-LeftFilter is-opened'</code> repeats base class.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Filters/Left/Items.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Stable <code>item.id</code> keys; labels associated.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Filters/Left/Info.jsx</code></td><td><span class="pill minor">Minor</span></td><td><code>forwardRef</code> without <code>displayName</code>.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Filters/Left/Desktop-Only/ChosenItem.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>All props required; complete.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Filters/Left/Desktop-Only/ClearButton.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Complete; caller passes extra <code>panelHeader</code>.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Filters/Left/Desktop-Only/SelectedItem.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Complete.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Filters/Left/Desktop-Only/Title.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Complete.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Filters/Left/Mobile-Only/GroupFooter.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Complete.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Filters/Left/Mobile-Only/Info.jsx</code></td><td><span class="pill minor">Minor</span></td><td><code>forwardRef</code> without <code>displayName</code>.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Filters/Left/Mobile-Only/PanelFooter.jsx</code></td><td><span class="pill minor">Minor</span></td><td><code>forwardRef</code> without <code>displayName</code>.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Filters/Left/Mobile-Only/Title.jsx</code></td><td><span class="pill minor">Minor</span></td><td><code>forwardRef</code> without <code>displayName</code>.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Filters/Top/Footer.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Complete.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Filters/Top/Group.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean; receives extra props from Panel.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Filters/Top/Items.jsx</code></td><td><span class="pill minor">Minor</span></td><td><code>new Set()</code> mutated inside <code>.map</code> (render-time side effect); inconsistent a11y between label types.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Filters/Top/Panel.jsx</code></td><td><span class="pill minor">Minor</span></td><td>Passes undeclared <code>isOpened</code>/<code>onClick</code>/<code>isTopFilter</code> to <code>Group</code> (dead props).</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>Consonant/Infobit/Group.jsx</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>key={cuid()}</code> on all 13 branches (remounts every render); returns <code>''</code> instead of <code>null</code> (127).</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Infobit/Type/Bookmark/Bookmark.jsx</code></td><td><span class="pill minor">Minor</span></td><td>Dead <code>data-testid</code> prop to <code>Tooltip</code>; possibly inverted save/unsave icon; JSDoc drift.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/Bookmark/Tooltip.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Comment typo only.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/Button.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Complete; anchor CTA has <code>rel="noopener noreferrer"</code>.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/DateInterval.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>All props required.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/Gated.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Static SVG.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Infobit/Type/Icon.jsx</code></td><td><span class="pill minor">Minor</span></td><td>JSDoc header/<code>@example</code> describe a different ("Icon With Text") component.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/IconWithText.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Complete.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/Link.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean; <code>rel="noopener noreferrer"</code>.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/LinkWithIcon.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Redundant <code>tabIndex</code> on anchor.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/Price.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/Progress.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td><code>role="progressbar"</code> with aria values.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/Rating.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Scoped <code>no-param-reassign</code> disables justified; JSDoc drift.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Infobit/Type/Text.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Loader/Loader.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/NoResults/View.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Pagination/LoadMore.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>All props required; redundant <code>tabIndex="0"</code>.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Pagination/Paginator.jsx</code></td><td><span class="pill minor">Minor</span></td><td><code>handleClick</code> reads page from <code>target.firstChild.nodeValue</code> (fragile DOM reach); redundant <code>tabIndex</code>.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Search/Search.jsx</code></td><td><span class="pill minor">Minor</span></td><td>Hardcoded English <code>aria-label</code>s amid i18n config; JSDoc drift.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Search/SearchIcon.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>i18n <code>aria-label</code>.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Sort/Popup.jsx</code></td><td><span class="pill minor">Minor</span></td><td>Numeric <code>tabIndex={0}</code> vs string elsewhere; hardcoded English fallbacks.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Page/ConsonantPageDOM.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Standard RDC wiring.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Helpers/CardFilterer.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean; two dead params in <code>sortCards</code>.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Helpers/Helpers.js</code></td><td><span class="pill minor">Minor</span></td><td><code>no-param-reassign</code> on <code>cards = temp</code> (275, suppressed); empty JSDoc stub; sort helpers mutate caller's array.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Helpers/JsonProcessor.js</code></td><td><span class="pill minor">Minor</span></td><td>Mis-typed path <code>contentArea.dateTetailText</code> (92) → always <code>''</code>. Bug.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Helpers/cards.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Helpers/consonant.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Helpers/constants.js</code></td><td><span class="pill na">N/A</span></td><td>Pure constants/config maps.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Helpers/contexts.js</code></td><td><span class="pill na">N/A</span></td><td><code>noOp</code> + <code>createContext</code> only.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Helpers/decorators.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Single HOC; scoped disables intentional.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Helpers/eventSort.js</code></td><td><span class="pill minor">Minor</span></td><td><code>var</code> legacy code under blanket disable; commented-out block (248-254); <code>updateTimeOverride</code> effectively dead; empty-input returns array not object (127).</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Helpers/general.js</code></td><td><span class="pill minor">Minor</span></td><td>Double <code>Date.parse</code> → <code>NaN</code>, dead branch (569); meaningless named fn expr <code>foo</code> (530).</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Helpers/hooks.js</code></td><td><span class="pill minor">Minor</span></td><td><code>var</code> <code>debounce</code> under blanket disable (dup of <code>general.js</code>); <code>useLazyLoading</code> builds observer every render.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Helpers/lana.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean; <code>console.*</code> allowed.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Helpers/prettyFormat.js</code></td><td><span class="pill consistent">Consistent</span></td><td>JSDoc drift only.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Helpers/rendering.js</code></td><td><span class="pill consistent">Consistent</span></td><td><code>key={cuid()}</code> (systemic) but no style-guide violation.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Helpers/scroller.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Helpers/withLinkTransformer.js</code></td><td><span class="pill minor">Minor</span></td><td>Stray <code>// here</code> debug comments (60-61); dead 3rd arg to <code>transformLink</code> (45).</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/types/card.js</code></td><td><span class="pill na">N/A</span></td><td>PropTypes shape definitions.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/types/config.js</code></td><td><span class="pill na">N/A</span></td><td>PropTypes shape definitions.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Helpers/TestingConstants/CardFilterer.js</code></td><td><span class="pill na">N/A</span></td><td>Test fixture data, out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Helpers/TestingConstants/Helpers.js</code></td><td><span class="pill na">N/A</span></td><td>Test fixture data, out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Helpers/TestingConstants/JsonProcessor.js</code></td><td><span class="pill na">N/A</span></td><td>Test fixture data, out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Helpers/TestingConstants/cards.js</code></td><td><span class="pill na">N/A</span></td><td>Test fixture data, out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Helpers/TestingConstants/consonant.js</code></td><td><span class="pill na">N/A</span></td><td>Test fixture data, out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Helpers/TestingConstants/eventSort.js</code></td><td><span class="pill na">N/A</span></td><td>Test fixture data, out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Helpers/TestingConstants/general.js</code></td><td><span class="pill na">N/A</span></td><td>Test fixture data, out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Helpers/TestingConstants/prettyFormat.js</code></td><td><span class="pill na">N/A</span></td><td>Test fixture data, out of scope.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>Consonant/Modal/Icon.js</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Empty 0-byte file, never imported. Dead module.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Modal/SendLink.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean class; third-party snippet scoped-disabled.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Modal/backgroundVideo.js</code></td><td><span class="pill minor">Minor</span></td><td>Deprecated <code>MediaQueryList.addListener</code> (101); stale JSDoc (66-69).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Modal/iframe.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean class.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Modal/modal.js</code></td><td><span class="pill minor">Minor</span></td><td>Blanket <code>/* eslint-disable */</code> on ~377 authored lines; <code>getDisplayType()</code> returns <code>{}</code> where a string is expected (76-81).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Modal/modalFocus.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Minor: string <code>'0'</code> assigned to numeric <code>tabIndex</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>Consonant/Modal/throttle.js</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td><code>let timeout</code> re-declared each call → clear guard permanently dead; <code>default-param-last</code> violation; JSDoc typos.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Modal/video.js</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean class.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>Consonant/Modal/videoButton.jsx</code></td><td><span class="pill consistent">Consistent</span></td><td>Complete propTypes/defaultProps; a11y OK.</td></tr>
+        <tr data-s="minor"><td class="file"><code>Consonant/Modal/videoModal.jsx</code></td><td><span class="pill minor">Minor</span></td><td>Pointless <code>oneOfType</code> around single type; <code>allowFullScreen=""</code>; non-standard <code>webkit/moz</code> attrs; <code>Math.random()</code> id.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Modal/@dexter/breakpoints.js</code></td><td><span class="pill na">N/A</span></td><td>Vendored Dexter code, out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Modal/@dexter/debug.js</code></td><td><span class="pill na">N/A</span></td><td>Vendored Dexter code (transpiled), out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Modal/@dexter/environment.js</code></td><td><span class="pill na">N/A</span></td><td>Vendored Dexter code, out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Modal/@dexter/getPropertySafely.js</code></td><td><span class="pill na">N/A</span></td><td>Vendored Dexter code (transpiled), out of scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>Consonant/Modal/@dexter/isVisible.js</code></td><td><span class="pill na">N/A</span></td><td>Vendored Dexter code (transpiled), out of scope.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>4. Recommendations</h2>
+
+    <div class="prio p1">
+      <h3>Priority 1 — Correctness (real bugs; fix regardless of style)</h3>
+      <ul>
+        <li><code>JsonProcessor.js:92</code> — fix mis-typed path <code>dateTetailText</code> → <code>dateDetailText</code>.</li>
+        <li><code>general.js:569</code> — remove the double <code>Date.parse</code>; <code>endPriority</code> is always <code>NaN</code>.</li>
+        <li><code>Modal/throttle.js</code> — move <code>let timeout</code> outside the returned closure; fix <code>default-param-last</code>.</li>
+        <li><code>CardFooter.jsx:143,152</code> — the <code>if (new Date(cardDate))</code> guard is always truthy; validate the date properly.</li>
+        <li><code>eventSort.js:127</code> — return the <code>{ visibleSessions, nextTransitionMs }</code> shape on the empty-input path.</li>
+        <li><code>Grid.jsx:255</code> — add a <code>key</code> to the <code>CARD_STYLES.CUSTOM</code> branch.</li>
+      </ul>
+    </div>
+
+    <div class="prio p2">
+      <h3>Priority 2 — React reconciliation &amp; state</h3>
+      <ul>
+        <li>Replace <code>key={cuid()}</code> with a stable id in <code>Infobit/Group.jsx</code>, <code>Helpers/rendering.js</code>, and the card footer maps — the single most impactful change.</li>
+        <li>Stop mutating state/config in <code>Container.jsx</code> and inputs in <code>Helpers/Helpers.js</code> sort helpers; return new arrays/objects.</li>
+        <li>Move <code>CardsCarousel.jsx</code>'s module-level <code>cardWidth</code>/<code>cardsShiftedPerClick</code> into component state/refs.</li>
+      </ul>
+    </div>
+
+    <div class="prio p3">
+      <h3>Priority 3 — Dead code &amp; disable hygiene</h3>
+      <ul>
+        <li>Delete empty <code>Modal/Icon.js</code> and <code>index.js</code>; remove/re-implement <code>polyfills.js</code> (and its no-op import); strip the Babel-verification <code>console.log</code> from <code>app.jsx</code>.</li>
+        <li>Replace blanket <code>/* eslint-disable */</code> headers (<code>app.jsx</code>, <code>modal.js</code>, <code>eventSort.js</code>, <code>hooks.js</code>) with targeted disables; migrate their <code>var</code> code to <code>const</code>/<code>let</code>.</li>
+        <li>Remove redundant inline disables for globally-off rules via <code>eslint --report-unused-disable-directives</code>.</li>
+        <li>Remove commented-out blocks (<code>Container.jsx:10,278</code>, <code>Grid.jsx:90</code>, <code>eventSort.js:248-254</code>, <code>withLinkTransformer.js:60-61</code>).</li>
+      </ul>
+    </div>
+
+    <div class="prio p4">
+      <h3>Priority 4 — PropTypes &amp; consistency</h3>
+      <ul>
+        <li>Bring <code>CardFooter.jsx</code> propTypes/defaultProps up to its real prop surface; drop extraneous props passed to <code>ClearButton</code>/<code>Group</code>.</li>
+        <li>Add <code>displayName</code> to the five <code>forwardRef</code> filter components.</li>
+        <li>Normalize <code>tabIndex</code> usage, fix copy-paste JSDoc headers, move hardcoded English aria strings (<code>Search.jsx</code>, <code>Sort/Popup.jsx</code>) into i18n config.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>Generated by /js-audit · Lens: Airbnb/ESLint · Adobe CaaS · 2026-07-29</footer>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('#filters button');
+  const rows = document.querySelectorAll('#findings tbody tr');
+  buttons.forEach(btn => btn.addEventListener('click', () => {
+    buttons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.f;
+    rows.forEach(r => { r.style.display = (f === 'all' || r.dataset.s === f) ? '' : 'none'; });
+  }));
+</script>
+</body>
+</html>

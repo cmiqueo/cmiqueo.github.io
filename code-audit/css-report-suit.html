@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSS Audit Report (SUIT CSS) — Adobe CaaS</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --ink: #1f2328;
+    --muted: #6a737d;
+    --line: #e4e7eb;
+    --accent: #1473e6;
+    --consistent: #268e6c;
+    --minor: #da7b11;
+    --inconsistent: #d7373f;
+    --na: #8e8e8e;
+    --code-bg: #f2f4f6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; }
+  header.masthead {
+    background: linear-gradient(135deg, #12805c, #268e6c);
+    color: #fff;
+    border-radius: 14px;
+    padding: 32px 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 6px 24px rgba(38,142,108,0.25);
+  }
+  header.masthead h1 { margin: 0 0 6px; font-size: 26px; letter-spacing: -0.3px; }
+  header.masthead .badge {
+    display: inline-block; background: rgba(255,255,255,0.22); color: #fff; font-size: 12px; font-weight: 700;
+    padding: 3px 12px; border-radius: 20px; letter-spacing: 0.5px; margin-bottom: 10px;
+  }
+  header.masthead .meta { font-size: 13.5px; opacity: 0.94; display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 12px; }
+  header.masthead .meta b { font-weight: 600; }
+
+  .callout {
+    background: #fff8ec; border: 1px solid #f3d9ab; border-left: 4px solid var(--minor);
+    border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; font-size: 14px;
+  }
+  .callout b { color: #9a5b0d; }
+
+  .scorecards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 26px; }
+  .score {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 18px; text-align: center;
+  }
+  .score .num { font-size: 30px; font-weight: 700; line-height: 1; }
+  .score .lbl { font-size: 12.5px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .score.c .num { color: var(--consistent); }
+  .score.m .num { color: var(--minor); }
+  .score.i .num { color: var(--inconsistent); }
+  .score.n .num { color: var(--na); }
+
+  section {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 26px 30px; margin-bottom: 22px;
+  }
+  h2 { font-size: 19px; margin: 0 0 16px; padding-bottom: 10px; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 15px; margin: 22px 0 8px; color: var(--accent); }
+  p { margin: 0 0 12px; }
+  ol, ul { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  code {
+    background: var(--code-bg); padding: 1.5px 5px; border-radius: 4px;
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; color: #b3121a;
+    word-break: break-word;
+  }
+  .sev { font-weight: 600; }
+  .sev.hi { color: var(--inconsistent); }
+
+  table.findings { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.findings th, table.findings td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.findings th { background: #fafbfc; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); }
+  td.file code { background: transparent; color: var(--ink); padding: 0; font-size: 12px; }
+  table.findings tr:hover td { background: #fbfcfd; }
+
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+  .pill.consistent { background: #e3f3ec; color: var(--consistent); }
+  .pill.minor { background: #fcefdd; color: var(--minor); }
+  .pill.inconsistent { background: #fbe3e4; color: var(--inconsistent); }
+  .pill.na { background: #eef0f2; color: var(--na); }
+
+  .filterbar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .filterbar button {
+    border: 1px solid var(--line); background: #fff; border-radius: 20px;
+    padding: 5px 14px; font-size: 12.5px; cursor: pointer; color: var(--ink);
+    font-family: inherit; transition: all .12s;
+  }
+  .filterbar button:hover { border-color: var(--accent); }
+  .filterbar button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .prio { border-left: 4px solid var(--line); padding: 4px 0 4px 16px; margin-bottom: 18px; }
+  .prio.p1 { border-color: var(--inconsistent); }
+  .prio.p2 { border-color: var(--accent); }
+  .prio.p3 { border-color: var(--minor); }
+  .prio.p4 { border-color: var(--consistent); }
+  .prio h3 { margin-top: 0; color: var(--ink); }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+  @media (max-width: 720px) {
+    .scorecards { grid-template-columns: repeat(2, 1fr); }
+    .wrap { padding: 20px 12px 50px; }
+    section { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="badge">STANDARD: SUIT CSS</div>
+    <h1>CSS Audit Report</h1>
+    <div>Adobe CaaS — Consonant Card Collection</div>
+    <div class="meta">
+      <span><b>Scope:</b> Authored LESS under <code style="color:#fff;background:rgba(255,255,255,0.18)">less/</code> — 68 files</span>
+      <span><b>Date:</b> 2026-07-29</span>
+      <span><b>Standard:</b> SUIT CSS (namespaced PascalCase components, <code style="color:#fff;background:rgba(255,255,255,0.18)">-descendant</code>, <code style="color:#fff;background:rgba(255,255,255,0.18)">--modifier</code>, <code style="color:#fff;background:rgba(255,255,255,0.18)">is-</code> state)</span>
+    </div>
+  </header>
+
+  <div class="callout">
+    <b>Note on file count:</b> the audit brief mentioned "64 files," but the full de-duplicated file list provided (and the actual contents of <code>less/</code>) contains <b>68</b> unique files, with no duplicates. All 68 were read and are scored below; this report and the companion Markdown report both total 68 rows.
+  </div>
+
+  <div class="scorecards">
+    <div class="score c"><div class="num">33</div><div class="lbl">Consistent</div></div>
+    <div class="score m"><div class="num">16</div><div class="lbl">Minor issues</div></div>
+    <div class="score i"><div class="num">6</div><div class="lbl">Inconsistent</div></div>
+    <div class="score n"><div class="num">13</div><div class="lbl">N/A</div></div>
+  </div>
+
+  <section>
+    <h2>1. Summary</h2>
+    <p>The codebase is internally disciplined around a <b><code>consonant-PascalCase</code></b> block convention with <code>&amp;-camelCase</code> descendant nesting and <code>&amp;--camelCase</code> modifier nesting — a close cousin of SUIT CSS, but the <code>consonant-</code> prefix itself is a deviation from bare SUIT (<code>.FiltersInfo</code>, not <code>.consonant-FiltersInfo</code>), applied consistently enough that it reads as an intentional house standard rather than an accident.</p>
+    <p>The real problems are concentrated in the <code>cards/</code> folder and a handful of outlier files: card "type" selectors use inconsistent bare kebab-case classes instead of a single SUIT modifier, several files hardcode colors/sizes that already exist as variables, and <b>7 files (<code>less/references/*.less</code>, <code>less/utils/*.less</code>) are dead code</b> — never <code>@import</code>ed by the sole build entry point <code>less/app.less</code>.</p>
+  </section>
+
+  <section>
+    <h2>2. Systemic &amp; Recurring Issues</h2>
+    <ol>
+      <li><b>The <code>consonant-</code> prefix breaks strict SUIT component naming, but is applied uniformly.</b> Every block is <code>.consonant-&lt;PascalName&gt;</code> (e.g. <code>.consonant-FiltersInfo</code>, <code>.consonant-LeftFilter</code>) rather than a bare <code>.FiltersInfo</code>. This is the single most common "deviation" in the audit, appearing in nearly every file — but because it is applied consistently, it reads as the project's real baseline rather than noise. Recommend documenting it explicitly as the project convention rather than treating each instance as an error.</li>
+      <li><b>Card "type" modifiers are bare, inconsistently-named kebab-case classes instead of a single SUIT modifier.</b> <code>cards-grid.less</code>/<code>theme.less</code> key off <code>.consonant-Card.one-half</code>, <code>.blog-card</code>, <code>.button-card</code>, <code>.editorial-card</code>, <code>.flex-card</code>, <code>.double-wide</code>, <code>.product</code>, <code>.text-card</code>, <code>.three-fourths</code>, <code>.horizontal-card</code>, <code>.icon-card</code>, <code>.news-card</code>. Naming isn't even consistent among themselves (<code>-card</code> suffix vs. none, singular vs. plural: <code>three-fourths</code> vs <code>double-wide</code> vs <code>product</code>). Under SUIT this should be one scheme, e.g. <code>.consonant-Card--oneHalf</code>.</li>
+      <li><b>Duplicated near-identical blocks instead of shared mixins.</b> <code>filters/left/item.less</code> (601 lines) and <code>filters/top/item.less</code> (568 lines) are ~90% structurally identical (checkmark, badge, footer, category-nesting logic all repeated). Likewise <code>filters/left/panel.less</code> and <code>filters/top/panel.less</code>. The card-banner/badge/logo block (~30 lines) is copy-pasted near-verbatim across <code>full.less</code>, <code>half-height.less</code>, <code>one-half.less</code>, <code>text.less</code>, <code>three-fourth.less</code>, <code>flex.less</code>, <code>double-wide.less</code>.</li>
+      <li><b>Widespread magic numbers and hardcoded colors instead of <code>variables.less</code>/<code>theme.less</code> tokens.</b> Worst in <code>cards-carousel.less</code> (hex colors <code>#242424</code>, <code>#e6e6e6</code>, <code>#d5d5d5</code>, <code>#b1b1b1</code>, plus pixel widths <code>500px</code>/<code>394px</code>/<code>389px</code>/<code>384px</code>/<code>378px</code> duplicating values that exist as variables elsewhere), <code>cards/blade.less</code>, <code>cards/button.less</code>, <code>cards/flex.less</code>, and <code>categories.less</code>.</li>
+      <li><b><span class="sev hi">Dead code: 7 files are never imported by the build.</span></b> <code>less/app.less</code> only imports <code>components/consonant/main.less</code>, whose import chain covers every <code>components/consonant/*.less</code> file but never reaches <code>less/references/flex.less</code>, <code>references/main.less</code>, <code>references/type.less</code>, <code>utils/hide.less</code>, <code>utils/lineclamp.less</code>, <code>utils/margin.less</code>, or <code>utils/misc.less</code>. These duplicate functionality already present in <code>components/consonant/utils.less</code> (<code>.hide-all</code>, <code>.line-clamp()</code>, <code>.margin-auto</code>, <code>.full-width</code>) and, notably, <code>references/main.less</code>/<code>type.less</code> use presentational class names (<code>.left</code>, <code>.center</code>, <code>.right</code>, <code>.bold</code>) that would themselves fail this audit's "no presentational names" rule if they were ever compiled.</li>
+      <li><b>Ad-hoc breakpoints bypass the shared breakpoint variables.</b> <code>cards-grid.less</code> (<code>@media (max-width: 320px)</code>, <code>(max-width: 600px)</code>) and <code>cards/blade.less</code> (<code>1200px</code>, <code>600px</code>) use raw pixel media queries instead of the <code>@consonant-*-up</code>/<code>-down</code> variables defined in <code>media-queries.less</code> and used everywhere else.</li>
+      <li><b><code>modal.less</code> is a vendored style island.</b> It opens with <code>/* stylelint-disable */</code>, uses 2-space indentation (vs. 4-space everywhere else), and follows an entirely separate <code>dexter-</code>/kebab-case naming system, making it visibly inconsistent with the rest of the authored tree even though its third-party origin explains why.</li>
+      <li><b>Isolated copy/paste bugs.</b> <code>rtl.less</code> has a typo, <code>&amp;-selctedItemsQty</code> (missing an "e"), under <code>.consonant-TopFilter</code> — this RTL rule never matches the real class <code>consonant-TopFilter-selectedItemsQty</code> emitted by <code>Filters/Top/Group.jsx</code>, so it silently does nothing. <code>search.less</code> has a multi-line <code>transition</code> list missing a comma between <code>border-color …</code> and <code>background-color …</code>. <code>cards-carousel.less</code> mixes uppercase and lowercase hex in inline SVG fills (<code>%23B1B1B1</code> vs <code>%23b1b1b1</code>).</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>3. Per-File Findings</h2>
+    <div class="filterbar" id="filters">
+      <button data-f="all" class="active">All (68)</button>
+      <button data-f="consistent">Consistent (33)</button>
+      <button data-f="minor">Minor (16)</button>
+      <button data-f="inconsistent">Inconsistent (6)</button>
+      <button data-f="na">N/A (13)</button>
+    </div>
+    <table class="findings" id="findings">
+      <thead><tr><th style="width:38%">File</th><th style="width:12%">Status</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr data-s="na"><td class="file"><code>less/app.less</code></td><td><span class="pill na">N/A</span></td><td>Single <code>@import</code> line; no selectors.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/accessibility.less</code></td><td><span class="pill minor">Minor</span></td><td>Correct <code>consonant-</code>/<code>is-</code> nesting overall; <code>.consonant-Card-videoButton-wrapper</code> chains three descendant segments beyond SUIT's single-level descendant shape.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/animations.less</code></td><td><span class="pill na">N/A</span></td><td><code>@keyframes</code> only, no selectors.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/bookmarks.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean <code>&amp;-</code>/<code>is-selected</code> nesting, all values from <code>variables.less</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/cards-carousel.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Extensive hardcoded pixel widths (500px, 394px, 389px, 384px, 378px…) and hex colors (<code>#242424</code>, <code>#e6e6e6</code>, <code>#d5d5d5</code>, <code>#b1b1b1</code>, <code>#373737</code>) duplicating existing variables; bare non-namespaced classes (<code>.modern-carousel</code>, <code>.disabled</code>); inconsistent hex casing in inline SVG fills (<code>%23B1B1B1</code> vs <code>%23b1b1b1</code>).</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/cards-grid.less</code></td><td><span class="pill minor">Minor</span></td><td>Good <code>&amp;--</code> modifier documentation and variable use; ad-hoc <code>@media (max-width: 320px)</code>/<code>(max-width: 600px)</code> bypass shared breakpoint variables; <code>[class *= -header]</code> attribute-selector hack.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/cards/blade.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Keys off attribute-selector hacks (<code>[class ^= "blade"]</code>, <code>[data-card-style ^= "blade"]</code>) instead of a <code>consonant-Card--blade</code> modifier; heavy magic numbers (24px, 42%, 55%, 18px, 36px); ad-hoc <code>1200px</code>/<code>600px</code> media queries; hardcoded <code>#fff</code>/<code>#000</code>.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/cards/blog.less</code></td><td><span class="pill minor">Minor</span></td><td>Clean mixin reuse (<code>.card-hover</code>, <code>.card-hover-header</code>); relies on bare kebab <code>.blog-card</code> keying class rather than a SUIT modifier — recurring pattern across <code>cards/</code>.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/cards/button.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Bare <code>.button-card</code> class; hardcoded <code>#000</code>/<code>#dedede</code>; large inline base64 SVG; magic numbers (25px, 21px, 20px) with no variables, unlike sibling card files.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/cards/card-footer/card-footer.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Textbook <code>&amp;-</code>/<code>&amp;--</code> nesting, documented modifiers at file top, variable-driven.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/cards/card.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean structure, consistent mixin/variable usage.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/cards/double-wide.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Good variable usage; bare <code>.double-wide</code> keying class matches the sibling-file pattern (see systemic issue #2).</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/cards/editorial.less</code></td><td><span class="pill minor">Minor</span></td><td>Hardcoded magic numbers (16px, 213px, 24px, 12px) where sibling cards use <code>variables.less</code> equivalents; mixes bare-kebab (<code>.editorial-card</code>) and SUIT-like (<code>.consonant-editorial--open</code>) naming in the same file.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/cards/flex.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Largest, most magic-number-heavy card file (28px, 18px, 27px, 32px, 20px, 24px); hardcoded <code>#333</code>/<code>#666</code>; adds presentational utility-style modifier classes (<code>.text-left</code>, <code>.text-center</code>, <code>.text-right</code>, <code>.text-justify</code>, <code>.text-large</code>, <code>.image-small-center</code>, <code>.rounded-corners</code>) entirely outside the <code>consonant-</code> BEM/SUIT tree.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/cards/full.less</code></td><td><span class="pill minor">Minor</span></td><td>Mostly variable-driven; one hardcoded rgba gradient not variablized.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/cards/half-height.less</code></td><td><span class="pill minor">Minor</span></td><td>Mostly variable-driven; hardcoded <code>#fff</code> and rgba gradient values.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/cards/horizontal.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean, compact, fully variable-driven.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/cards/icon.less</code></td><td><span class="pill minor">Minor</span></td><td>Mostly consistent; hardcoded 64px/48px/16px sizes not pulled from <code>variables.less</code>.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/cards/link-blocker/link-blocker.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Small, clean, correct SUIT shape.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/cards/news.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean, variable-driven, matches <code>one-half.less</code> pattern.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/cards/one-half.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean, matches sibling card files, good variable usage.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/cards/product-card.less</code></td><td><span class="pill minor">Minor</span></td><td>Keying class is bare <code>.product</code> — inconsistent with sibling convention of <code>.xxx-card</code> (e.g. <code>.blog-card</code>, <code>.news-card</code>); hardcoded <code>min-height: 222px</code> with no variable.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/cards/text.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Matches sibling structure and variable usage.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/cards/three-fourth.less</code></td><td><span class="pill minor">Minor</span></td><td>Mostly consistent; hardcoded heights (384px, 344px) duplicate values already defined as <code>@consonant-CardsGrid-smaller/smallestCardheight</code> variables.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/categories.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Root selector <code>.Categories</code> drops the <code>consonant-</code> prefix entirely (biggest naming deviation in the audit); bare presentational/kebab classes (<code>.filters-category</code>, <code>.filter-group-title</code>); many hardcoded hex colors instead of <code>variables.less</code>; file opens with an unresolved <code>/* TODO: This should be moved to its own file */</code>.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/consonant-search-result.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Minimal, clean, SUIT-shaped, variable-driven.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/filters-info.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Exemplary <code>&amp;-</code>/<code>&amp;--</code> nesting, documented modifiers, fully variable-driven.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/filters/left/chosen-item.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean, variable-driven.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/filters/left/item.less</code></td><td><span class="pill minor">Minor</span></td><td>Well structured; contains a commented-out dead rule (<code>// border-color: @consonantLightGrey600;</code>) that should be removed; near-duplicate of <code>filters/top/item.less</code> (systemic issue #3).</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/filters/left/panel.less</code></td><td><span class="pill minor">Minor</span></td><td>Comment explicitly flags <code>/* We need anti-BEM approach here; */</code>, an acknowledged convention break; otherwise consistent; near-duplicate of <code>filters/top/panel.less</code>.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/filters/top/item.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Well-formed SUIT-style nesting internally, though largely duplicated with <code>filters/left/item.less</code> (systemic issue #3).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/filters/top/panel.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Well-formed, consistent with sibling <code>filters/left/panel.less</code>.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/infobits/bookmark.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean; <code>is-active</code>/<code>is-disabled</code> states correctly SUIT-prefixed.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/infobits/button.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Documented modifiers, clean nesting.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/infobits/date.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Small, clean.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/infobits/icon-with-text.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/infobits/icon.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean, minimal.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/infobits/link-with-icon.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/infobits/link.less</code></td><td><span class="pill minor">Minor</span></td><td>Core block is clean; an external rule <code>*:not(:last-of-type):nth-child(2) &gt; .consonant-LinkInfobit:only-child</code> is an overly specific/chained selector outside the component block.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/infobits/price.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean SUIT nesting.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/infobits/progress.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean, documented modifier.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/infobits/rating.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean; helper mixin invocations at file end match established pattern.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/infobits/text.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean, minimal.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/load-more.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Documented modifiers; dark-theme handled via shared <code>@dark-theme</code> variable.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/loader.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Documented modifiers, clean.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/localeOverrides.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Narrow, purpose-built override file, correctly scoped via <code>:lang()</code>.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/main.less</code></td><td><span class="pill na">N/A</span></td><td>Import manifest only, no selectors.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/media-queries.less</code></td><td><span class="pill na">N/A</span></td><td>Breakpoint variable definitions only.</td></tr>
+        <tr data-s="inconsistent"><td class="file"><code>less/components/consonant/modal.less</code></td><td><span class="pill inconsistent">Inconsistent</span></td><td>Opens with <code>/* stylelint-disable */</code>; 2-space indentation vs. 4-space convention everywhere else; entirely separate <code>dexter-</code>/kebab-case naming system, outside the <code>consonant-</code> SUIT tree (systemic issue #7).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/no-results-view.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean, documented modifier, variable-driven.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/pagination.less</code></td><td><span class="pill minor">Minor</span></td><td>Mostly consistent SUIT nesting; bare <code>.lightText</code> modifier applied directly instead of <code>consonant-Pagination--lightText</code>, inconsistent with the file's own modifier convention.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/rtl.less</code></td><td><span class="pill minor">Minor</span></td><td>Comprehensive RTL coverage mirroring component structure; contains a typo <code>&amp;-selctedItemsQty</code> under <code>.consonant-TopFilter</code> that makes this RTL rule dead (never matches the real JSX class name).</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/scaffolding.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Tiny universal-behavior file, correctly scoped to <code>.consonant-Wrapper</code>.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/search-ico.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean, variable-driven.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/search.less</code></td><td><span class="pill minor">Minor</span></td><td>Mostly clean; multi-line <code>transition</code> list is missing a comma between <code>border-color …</code> and <code>background-color …</code>, unlike correctly comma-separated lists elsewhere.</td></tr>
+        <tr data-s="minor"><td class="file"><code>less/components/consonant/select.less</code></td><td><span class="pill minor">Minor</span></td><td>Mostly variable-driven; hover state uses hardcoded <code>#ccc</code>/<code>#aaa</code> instead of palette variables.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/theme.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Large but disciplined mixin-driven theme generator; consistent variable naming/structure.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/tooltip.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Clean, variable-driven.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/utils.less</code></td><td><span class="pill na">N/A</span></td><td>Mixin/helper library (<code>.font()</code>, <code>.line-clamp()</code>, etc.), not meant for direct use as component classes.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/components/consonant/variables.less</code></td><td><span class="pill na">N/A</span></td><td>Variable definitions only.</td></tr>
+        <tr data-s="consistent"><td class="file"><code>less/components/consonant/wrapper.less</code></td><td><span class="pill consistent">Consistent</span></td><td>Documented modifiers, clean <code>&amp;--</code> nesting, variable-driven.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/references/flex.less</code></td><td><span class="pill na">N/A</span></td><td>Dead code — never imported by the build (systemic issue #5); <code>:extend()</code>-oriented utility framework with intentionally presentational names, out of SUIT-comparison scope.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/references/main.less</code></td><td><span class="pill na">N/A</span></td><td>Dead code — never imported by the build; presentational utility classes (<code>.left</code>, <code>.center</code>, <code>.right</code>, <code>.top</code>, <code>.bottom</code>) that would fail this audit's naming rule if ever compiled.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/references/type.less</code></td><td><span class="pill na">N/A</span></td><td>Dead code — never imported by the build; typography utility classes, same orphaned status.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/utils/hide.less</code></td><td><span class="pill na">N/A</span></td><td>Dead code — never imported by the build; duplicates <code>.hide-all</code> already defined in <code>components/consonant/utils.less</code>.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/utils/lineclamp.less</code></td><td><span class="pill na">N/A</span></td><td>Dead code — never imported by the build; duplicates <code>.line-clamp()</code> already defined in <code>components/consonant/utils.less</code> (different mixin signature).</td></tr>
+        <tr data-s="na"><td class="file"><code>less/utils/margin.less</code></td><td><span class="pill na">N/A</span></td><td>Dead code — never imported by the build; duplicates <code>.margin-auto</code>/<code>.no-margin</code> already defined in <code>components/consonant/utils.less</code>.</td></tr>
+        <tr data-s="na"><td class="file"><code>less/utils/misc.less</code></td><td><span class="pill na">N/A</span></td><td>Dead code — never imported by the build; duplicates <code>.full-width</code>/<code>.position-absolute-0</code> already defined in <code>components/consonant/utils.less</code>.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>4. Recommendations</h2>
+
+    <div class="prio p1">
+      <h3>Priority 1 — Highest impact</h3>
+      <ul>
+        <li><b>Standardize card "type" modifiers on a single SUIT scheme.</b> Replace the mixed bag of <code>.one-half</code>, <code>.blog-card</code>, <code>.button-card</code>, <code>.product</code>, <code>.three-fourths</code>, <code>.double-wide</code>, <code>.icon-card</code>, etc. with one convention (e.g. <code>.consonant-Card--oneHalf</code>). Touches the largest number of files (<code>cards/</code>, <code>cards-grid.less</code>, <code>theme.less</code>, <code>rtl.less</code>) — coordinate with the React/AEM markup that emits these class names.</li>
+        <li><b>Remove or wire up the 7 orphaned files.</b> Delete <code>less/references/*.less</code> and <code>less/utils/*.less</code> (hide/lineclamp/margin/misc) if truly unused, or <code>@import</code> them if they were meant to ship — right now they are dead weight that risks confusing future contributors who edit them expecting an effect.</li>
+      </ul>
+    </div>
+
+    <div class="prio p2">
+      <h3>Priority 2 — Structural cleanup</h3>
+      <ul>
+        <li><b>Extract the repeated card-banner/badge/logo/videoIco block into a shared mixin</b> in <code>utils.less</code>, used by all card files, instead of the current ~30-line copy-paste across 7 files.</li>
+        <li><b>Consolidate <code>filters/left/item.less</code> + <code>filters/top/item.less</code></b> (and the matching <code>panel.less</code> pair) into shared mixins/partials — they are ~90% identical and drift risk is high (as evidenced by the <code>rtl.less</code> typo affecting only one of the two).</li>
+      </ul>
+    </div>
+
+    <div class="prio p3">
+      <h3>Priority 3 — Tokens &amp; correctness</h3>
+      <ul>
+        <li><b>Replace hardcoded colors/sizes</b> in <code>cards-carousel.less</code>, <code>cards/blade.less</code>, <code>cards/button.less</code>, <code>cards/flex.less</code>, and <code>categories.less</code> with existing <code>variables.less</code>/<code>theme.less</code> tokens; consider a stylelint rule forbidding raw hex/pixel literals in the Consonant tree going forward.</li>
+        <li><b>Fix the two concrete bugs found:</b> the <code>rtl.less</code> <code>&amp;-selctedItemsQty</code> typo (dead RTL rule) and the missing comma in <code>search.less</code>'s <code>transition</code> list.</li>
+      </ul>
+    </div>
+
+    <div class="prio p4">
+      <h3>Priority 4 — Documentation</h3>
+      <ul>
+        <li><b>Document the <code>consonant-</code> prefix as the project's official naming standard</b> (rather than pure SUIT) so future audits and contributors don't mistake a consistently-applied, deliberate prefix for an error.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>Generated by /css-audit · Standard: SUIT CSS · Adobe CaaS · 2026-07-29</footer>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('#filters button');
+  const rows = document.querySelectorAll('#findings tbody tr');
+  buttons.forEach(btn => btn.addEventListener('click', () => {
+    buttons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.f;
+    rows.forEach(r => { r.style.display = (f === 'all' || r.dataset.s === f) ? '' : 'none'; });
+  }));
+</script>
+</body>
+</html>
