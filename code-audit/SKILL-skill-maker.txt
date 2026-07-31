@@ -1,0 +1,57 @@
+---
+name: skill-maker
+description: "Use this skill when the user wants to create a new skill, scaffold a skill file, or build a custom Claude Code skill. Triggers include: 'create a skill', 'make a new skill', 'scaffold a skill', 'skill-maker', '/skill-maker'. Guides the user through naming, describing, and specifying a skill, asks clarifying follow-ups, drafts the SKILL.md, and saves it under ~/.claude/skills after confirmation."
+---
+
+# Skill Maker
+
+Interactively gather requirements from the user and generate a new skill file (`SKILL.md`) under `~/.claude/skills/<skill-name>/`.
+
+## Steps
+
+1. **Gather the core inputs.** Ask the user for these three things (use the AskUserQuestion tool if helpful, otherwise ask in chat). Do not proceed until you have all three:
+  - **Skill name** — kebab-case, lowercase, no spaces (e.g. `pr-summary`). If the user gives a name with spaces or capitals, normalize it and confirm.
+  - **Description** — what the skill does and, critically, *when it should trigger*. This becomes the `description` frontmatter field, which Claude uses to decide when to invoke the skill.
+  - **Basic requirements** — the steps, behavior, inputs, and outputs the skill should have.
+2. **Ask follow-up questions** until the requirements are concrete enough to write clear, unambiguous instructions. Consider asking about:
+  - Trigger phrases the user expects to say (fold these into the description).
+  - Inputs the skill needs (file paths, a PR URL, a repo, arguments) and where they come from.
+  - The exact output format expected (a report, a file, a code change, a message).
+  - Any tools, commands, or conventions the skill should use or avoid.
+  - Whether the skill needs supporting files (reference docs, templates, scripts) alongside `SKILL.md`.
+  - Edge cases or "if X then Y" branching behavior.
+   Stop asking once you can write each step so that a fresh agent could follow it without guessing. If the user says "that's enough" or "just make it," proceed with what you have and state any assumptions.
+3. **Draft the SKILL.md.** Follow this structure, matching the conventions of existing skills in `~/.claude/skills/`:
+  ```markdown
+   ---
+   name: <skill-name>
+   description: "<what it does + explicit trigger conditions and trigger phrases>"
+   ---
+
+   # <Skill Title>
+
+   <One or two sentence summary of what the skill does.>
+
+   ## Steps
+  ```
+  1.  — verify: 
+  2. 
+    .
+     Output Format
+    oncrete example of the expected output, if the skill produces one.>
+    `
+    idelines for the draft:
+    `name` must be kebab-case and match the directory name.
+    `description` must be third-person and lead with "Use this skill when…", listing concrete trigger phrases — this is what makes the skill fire reliably.
+    Keep instructions surgical and unambiguous. Prefer numbered, verifiable steps.
+    Only include an `## Output Format` section if the skill produces a structured output.
+4. **Show the full drafted** `SKILL.md` **to the user in the chat** and ask for confirmation. Explicitly ask: *"OK to save this to* `~/.claude/skills/<skill-name>/SKILL.md`*?"* Incorporate any requested edits and re-confirm.
+5. **On approval, save the file.** Create the directory `~/.claude/skills/<skill-name>/` and write `SKILL.md` into it. Confirm the saved path back to the user, and let them know the skill will be available (they may need to restart their session for it to register).
+6. **On finish**, ask the user if they want to create a polished, self-contained HTML version of the skill output.
+
+## Notes
+
+- The canonical skills directory is `~/.claude/skills` 
+- If a skill with the same name already exists, warn the user and ask whether to overwrite or pick a new name — do not silently overwrite.
+- Do not create supporting files (scripts, references) unless the user's requirements call for them.
+
