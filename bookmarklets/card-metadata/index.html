@@ -4,7 +4,17 @@
 <meta charset="UTF-8">
 <title>Card Metadata Bookmarklet</title>
 <style>
-  body { font-family: sans-serif; max-width: 640px; margin: 40px auto; line-height: 1.5; }
+  html { background: #efefef; }
+  body { font-family: none, sans-serif; 
+    max-width: 720px; 
+    margin: 40px auto; 
+    line-height: 1.5; 
+    background: #fefefe;
+    padding: 10px 25px;
+    border-radius: 20px;
+    box-shadow: 0 0 40px #ddd;
+    border: solid 1px #ccc;
+  }
   .bookmarklet {
     display: inline-block;
     padding: 10px 18px;
@@ -16,19 +26,33 @@
     font-weight: bold;
     cursor: grab;
   }
+  h2 { margin-bottom: -12px; }
   code { background: #f4f4f4; padding: 2px 5px; border-radius: 4px; }
+  a {color: #333}
+  a:hover {color: #33c}
 </style>
 </head>
 <body>
-<h1>Card Metadata Bookmarklet</h1>
+<h1 align="center">Card Metadata Bookmarklet</h1>
+
+<h2>How to Use it</h2>
 <p>Drag the button below to your bookmarks bar to install it:</p>
 <p><a class="bookmarklet" href="javascript:(async%20function()%7B%0A%20%20try%20%7B%0A%20%20%20%20let%20url%20%3D%20window.location.href.trim()%3B%0A%20%20%20%20for%20(const%20scheme%20of%20%5B%22https%3A%2F%2F%22%2C%20%22http%3A%2F%2F%22%5D)%20%7B%0A%20%20%20%20%20%20if%20(url.startsWith(scheme))%20%7B%0A%20%20%20%20%20%20%20%20url%20%3D%20url.substring(scheme.length)%3B%0A%20%20%20%20%20%20%20%20break%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%20%20const%20stage%20%3D%20url.includes('.stage.adobe.com')%20%3F%20'stage.'%20%3A%20''%3B%0A%20%20%20%20const%20msgUint8%20%3D%20new%20TextEncoder().encode(url)%3B%0A%20%20%20%20const%20hashBuffer%20%3D%20await%20crypto.subtle.digest('SHA-1'%2C%20msgUint8)%3B%0A%20%20%20%20const%20hashArray%20%3D%20Array.from(new%20Uint8Array(hashBuffer))%3B%0A%20%20%20%20const%20hex%20%3D%20hashArray.map(b%20%3D%3E%20b.toString(16).padStart(2%2C%20'0')).join('')%3B%0A%20%20%20%20const%20uuid%20%3D%20%60%24%7Bhex.substring(0%2C8)%7D-%24%7Bhex.substring(8%2C12)%7D-%24%7B(parseInt(hex.substring(12%2C16)%2C%2016)%20%26%200x0fff%20%7C%200x5000).toString(16).padStart(4%2C'0')%7D-%24%7B(parseInt(hex.substring(16%2C20)%2C%2016)%20%26%200x3fff%20%7C%200x8000).toString(16).padStart(4%2C'0')%7D-%24%7Bhex.substring(20%2C32)%7D%60%3B%0A%0A%20%20%20%20const%20pageDir%20%3D%20window.location.href.replace(%2F%5C%2F%5B%5E%2F%5D*%24%2F%2C%20'%2F')%3B%0A%20%20%20%20const%20md%20%3D%20document.querySelector('.card-metadata')%3B%0A%0A%20%20%20%20let%20contentHtml%20%3D%20%60%3Cdiv%20style%3D%22font-family%3Asans-serif%3Bmargin-bottom%3A12px%3Bborder-bottom%3A1px%20solid%20%23ccc%3B%20padding-bottom%3A14px%3Bbackground%3A%23eef%3Bpadding%3A%209px%206px%3Bborder-radius%3A%2010px%3B%22%3E%0A%20%20%20%20%20%20%3Cb%3EChimera%20UUID%3C%2Fb%3E%3Cbr%3E%0A%20%20%20%20%20%20%3Ccode%20style%3D%22font-size%3A15px%3B%22%3E%3Ca%20style%3D%22color%3A%23000%3B%20text-decoration%3Anone%22%20href%3D%22https%3A%2F%2Fwww.%24%7Bstage%7Dadobe.com%2Fchimera-api%2Fcollection%3Fdebug%3D1%26featuredCards%3D%24%7Buuid%7D%22%3E%24%7Buuid%7D%3C%2Fa%3E%3C%2Fcode%3E%0A%20%20%20%20%3C%2Fdiv%3E%60%3B%0A%0A%20%20%20%20if%20(!md)%20%7B%0A%20%20%20%20%20%20contentHtml%20%2B%3D%20%22%3Cp%20align%3D'center'%20style%3D'color%3Ared'%3EWarning!%3Cbr%3ENo%20card-metadata%20found%20in%20the%20file.%20%3Cp%20align%3D'center'%3EThe%20card%20may%20not%20exist%20in%20Chimera.%3C%2Fp%3E%22%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20const%20html%20%3D%20new%20DOMParser().parseFromString(md.innerHTML%2C%20'text%2Fhtml')%3B%0A%20%20%20%20%20%20const%20children%20%3D%20html.querySelectorAll('div')%3B%0A%20%20%20%20%20%20let%20output%20%3D%20'%3Cb%20style%3D%22font-family%3Aarial%2C%20sans-serif%3B%20margin-bottom%3A12px%3Bpadding-bottom%3A15px%3B%22%3ECard%20Metadata%3C%2Fb%3E%3Cbr%3E'%3B%0A%20%20%20%20%20%20children.forEach(child%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20const%20key%20%3D%20child.children%5B0%5D%3F.innerText%3B%0A%20%20%20%20%20%20%20%20let%20value%20%3D%20child.children%5B1%5D%3F.innerText%3B%0A%20%20%20%20%20%20%20%20if%20(key%20%26%26%20value)%20%7B%0A%20%20%20%20%20%20%20%20%20%20if%20(key.toLowerCase().endsWith('image'))%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20imgPath%20%3D%20child.querySelector('img')%3F.src.replace(%2F%5E.*%5C%2F%2F%2C%20'').replace(%2F%5C%3F.*%24%2F%2C%20'%20')%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20value%20%3D%20%60%3Cimg%20src%3D%22%24%7BpageDir%20%2B%20imgPath%7D%22%20style%3D%22max-width%3A100%25%3B%22%3E%60%3B%0A%20%20%20%20%20%20%20%20%20%20%7D%20else%20if%20(key.toLowerCase().includes('tag'))%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20value%20%3D%20%60%3Ctt%20style%3D%22font-family%3Amonospace%3Bfont-size%3A%20small%3B%22%3E%24%7Bvalue.replaceAll('%20'%2C'').replaceAll('%2C'%2C'%3Cbr%3E')%7D%3C%2Ftt%3E%60%3B%0A%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20output%20%2B%3D%20%60%3Cp%3E%3Cb%3E%24%7Bkey%7D%3C%2Fb%3E%3Cbr%3E%24%7Bvalue%7D%3C%2Fp%3E%5Cn%60%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%7D)%3B%0A%20%20%20%20%20%20contentHtml%20%2B%3D%20output%3B%0A%20%20%20%20%7D%0A%0A%20%20%20%20let%20existingModal%20%3D%20document.getElementById('chimera-metadata-modal')%3B%0A%20%20%20%20if%20(existingModal)%20existingModal.remove()%3B%0A%0A%20%20%20%20const%20modal%20%3D%20document.createElement('div')%3B%0A%20%20%20%20modal.id%20%3D%20'chimera-metadata-modal'%3B%0A%20%20%20%20modal.style.cssText%20%3D%20'position%3Afixed%3B%20top%3A20px%3B%20right%3A20px%3B%20width%3A360px%3B%20max-height%3A80vh%3B%20overflow-y%3Aauto%3B%20background%3Awhite%3B%20color%3Ablack%3B%20border%3A2px%20solid%20%23333%3B%20border-radius%3A8px%3B%20padding%3A16px%3B%20z-index%3A999999%3B%20box-shadow%3A0%204px%2012px%20rgba(0%2C0%2C0%2C0.3)%3B%20font-size%3A16px%3B%20line-height%3A1.25'%3B%0A%20%20%20%20modal.innerHTML%20%3D%20%60%3Cdiv%20style%3D%22display%3Aflex%3B%20justify-content%3Aspace-between%3B%20align-items%3Acenter%3B%20margin-bottom%3A10px%3B%22%3E%3Cb%20style%3D%22font-size%3A16px%3B%22%3E%3C%2Fb%3E%3Cbutton%20onclick%3D%22this.parentElement.parentElement.remove()%22%20style%3D%22background%3Anone%3B%20border%3Anone%3B%20font-size%3A16px%3B%20cursor%3Apointer%3B%20font-weight%3Abold%3B%22%3E%26times%3B%3C%2Fbutton%3E%3C%2Fdiv%3E%3Cdiv%20id%3D%22content%22%3E%24%7BcontentHtml%7D%3C%2Fdiv%3E%60%3B%0A%20%20%20%20document.body.appendChild(modal)%3B%0A%20%20%7D%20catch%20(error)%20%7B%0A%20%20%20%20alert(%22Error%3A%20%22%20%2B%20error.message)%3B%0A%20%20%20%20console.error(%22Error%20executing%20bookmarklet%3A%22%2C%20error)%3B%0A%20%20%7D%0A%7D)()%3B">Card Metadata</a></p>
 <p>If dragging doesn't work, right-click the button and choose "Bookmark Link" / "Add Bookmark", or create a new bookmark manually and paste the link's URL.</p>
+
+<h2>How it Works</h2>
+<p>Navigate to any page with a card-metadata milo block in it, i.e.:<br>
+   <a href="https://business.adobe.com/blog/introducing-genstudio-performance-marketing-mcp-server">https://business.adobe.com/blog/introducing-genstudio-performance-marketing-mcp-server</a>
+   <br>And click on the <b>Card Metadata</b> button in the toolbar.
+</p>
+
 <h2>What it does</h2>
-<p>Run it on an authored page containing a <code>.card-metadata</code> block. It shows a floating panel with the page's Chimera UUID (linked to the Chimera collection API for debugging) and the parsed card metadata (title, description, tags, images, etc.).</p>
+<p>Run it on an authored page containing a <code>card-metadata</code> block. It shows a floating panel with the page's Chimera UUID (linked to the Chimera collection API for debugging) and the parsed card metadata (title, description, tags, images, etc.).</p>
 
 <p>A new popup window will show the card UUID and the card metadata if available.</p>
-<img src="./card-metadata.png" width="320">
+
+<p><b>Note</b>: Some UUIDs may not match the Chimera UUID</p>
+<img src="./card-metadata.png" width="380">
 
 </body>
 </html>
