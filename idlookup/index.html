@@ -45,6 +45,15 @@
             font-style: normal;
             font-weight: 300;
         }
+        h1 b {
+            transform: rotate(0);
+            border: 0;
+            font-size: 24px;
+            vertical-align: 0;
+            text-transform: uppercase;
+            font-weight: 300;
+            color: #aaa;
+        }
         .container {
             display: flex;
             flex-direction: column;
@@ -98,6 +107,10 @@
         }
         .results-header {
             margin: 35px 0 10px;
+        }
+        .additional {
+            text-align: center;
+            margin-top: 50px;
         }
         .disclaimer {
             margin: 20px auto;
@@ -215,7 +228,7 @@
 </head>
 <body>
     <div class="header">
-        <h1><span>&#9906;</span>Entity<i>ID</i> Look<i>App</i></h1>
+        <h1><span>&#9906;</span>Entity<i>ID</i> Look<i>App</i> <b>lite</b></h1>
         <p>Another CaaS Entity ID Look-App for Milo and AEM pages</p>
     </div>
 
@@ -242,6 +255,12 @@
             </div>
         </div>
     </div>
+
+    <p class="additional">
+        <b>Note:</b> For additional features and a more robust search, use:
+        <br>
+        <a href="https://experience.adobe.com/#/@adobe-corpnew/custom-apps/14257-chidlookupservice/#/id-lookup">The Official Chimera Entity ID Lookup</a>
+    </p>
 
     <div class="disclaimer absolute">
         <p><b>Disclaimer</b>
